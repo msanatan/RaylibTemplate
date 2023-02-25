@@ -4,13 +4,12 @@
 class Player
 {
 public:
-  float x;
-  float y;
-  float z;
+  Vector3 position;
   float size;
 
   Player(float x, float y, float z, float size);
   void draw();
+  void move(Vector3 velocity);
 };
 
 #endif // !PLAYER_H
