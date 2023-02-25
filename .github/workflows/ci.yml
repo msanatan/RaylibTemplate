@@ -43,12 +43,12 @@ jobs:
           curl -L https://github.com/raysan5/raylib/releases/download/${{ env.RAYLIB_VERSION }}/raylib-${{ env.RAYLIB_VERSION }}_win64_mingw-w64.zip --output raylib.zip
           7z x raylib.zip -oraylibwrapper
           mv raylibwrapper\raylib-${{ env.RAYLIB_VERSION }}_win64_mingw-w64 raylib
-      # We need to set the path separator to Windows style, as the default is Unix style
-      - name: Set Windows-style Path Separator
-        run: echo "${{ env.GITHUB_WORKSPACE }}" | sed 's/\//\\/g' | sed 's/\\/\\\\/g' | xargs setx WORKSPACE_DIR
       # We build with our specific CI build command, which statically links Raylib
+      # First, we set the WORKSPACE_DIR environment variable to the current directory, but with the correct path separators
       - name: Build on Windows
-        run: make build-win-ci
+        run: |
+          $env:WORKSPACE_DIR = echo ${{ env.GITHUB_WORKSPACE }} | sed 's/\//\\/g' | sed 's/\\/\\\\/g'
+          make build-win-ci
       # We then zip the game with 7z as it's already installed in the shared runner
       - name: Zip game build on Mac
         run: cd build && 7z a -tzip ${{ env.GAME_NAME }}.zip *
