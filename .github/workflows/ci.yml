@@ -9,6 +9,7 @@ env:
 jobs:
   build-mac:
     runs-on: macos-12
+    if: contains(github.event.head_commit.message, 'skip-mac') == false
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -34,6 +35,7 @@ jobs:
 
   build-win:
     runs-on: windows-2022
+    if: contains(github.event.head_commit.message, 'skip-win') == false
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
