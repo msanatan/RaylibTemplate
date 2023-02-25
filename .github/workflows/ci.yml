@@ -9,27 +9,28 @@ env:
 jobs:
   build-mac:
     runs-on: macos-12
-    - name: Checkout code
-      uses: actions/checkout@v3
-    # Mac installation of Raylib is similar, but we need to copy the static library and headers into the repo
-    - name: Install Raylib on Mac
-      run: |
-        curl -L https://github.com/raysan5/raylib/releases/download/${{ env.RAYLIB_VERSION }}/raylib-${{ env.RAYLIB_VERSION }}_macos.tar.gz --output raylib.tar.gz
-        tar -xzvf raylib.tar.gz
-        cp raylib-${{ env.RAYLIB_VERSION }}_macos/lib/* .
-        cp raylib-${{ env.RAYLIB_VERSION }}_macos/include/* ./src
-    # We build with our specific CI build command, which statically links Raylib
-    - name: Build on Mac
-      run: make build-mac-ci
-    # We then zip the game, this is needed in Mac so the final .app file is executable
-    - name: Zip game build on Mac
-      run: cd build && zip -r ${{ env.GAME_NAME }}.zip *
-    # Upload the artifacts for each OS
-    - name: Archive artifacts
-      uses: actions/upload-artifact@v3
-      with:
-        name: ${{ env.GAME_NAME }}-${{ env.RUNNER_OS }}
-        path: build/${{ env.GAME_NAME }}.zip
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      # Mac installation of Raylib is similar, but we need to copy the static library and headers into the repo
+      - name: Install Raylib on Mac
+        run: |
+          curl -L https://github.com/raysan5/raylib/releases/download/${{ env.RAYLIB_VERSION }}/raylib-${{ env.RAYLIB_VERSION }}_macos.tar.gz --output raylib.tar.gz
+          tar -xzvf raylib.tar.gz
+          cp raylib-${{ env.RAYLIB_VERSION }}_macos/lib/* .
+          cp raylib-${{ env.RAYLIB_VERSION }}_macos/include/* ./src
+      # We build with our specific CI build command, which statically links Raylib
+      - name: Build on Mac
+        run: make build-mac-ci
+      # We then zip the game, this is needed in Mac so the final .app file is executable
+      - name: Zip game build on Mac
+        run: cd build && zip -r ${{ env.GAME_NAME }}.zip *
+      # Upload the artifacts for each OS
+      - name: Archive artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ env.GAME_NAME }}-${{ env.RUNNER_OS }}
+          path: build/${{ env.GAME_NAME }}.zip
 
   build-win:
     runs-on: windows-2022
