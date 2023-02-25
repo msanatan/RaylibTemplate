@@ -4,7 +4,7 @@ CFLAGS = -std=c++11
 LDFLAGS_MAC = -framework IOKit -framework Cocoa -framework OpenGL `pkg-config --libs raylib`
 LDFLAGS_MAC_CI = -framework CoreVideo -framework IOKit -framework Cocoa -framework GLUT -framework OpenGL libraylib.a
 LDFLAGS_WIN = -lraylib -lopengl32 -lgdi32 -lwinmm -mwindows
-INCFLAGS_WIN = -I${GITHUB_WORKSPACE}/raylib/include -L${GITHUB_WORKSPACE}/raylib/lib
+INCFLAGS_WIN = -I${GITHUB_WORKSPACE}\raylib\include -L${GITHUB_WORKSPACE}\raylib\lib
 SRC = src/*.cpp
 BUILDDIR = build
 APP_NAME = $(shell basename "$(CURDIR)")
