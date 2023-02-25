@@ -45,7 +45,7 @@ jobs:
           mv raylibwrapper\raylib-${{ env.RAYLIB_VERSION }}_win64_mingw-w64 raylib
       # We need to set the path separator to Windows style, as the default is Unix style
       - name: Set Windows-style Path Separator
-        echo "${{ env.GITHUB_WORKSPACE }}" | sed 's/\\/\\\\/g' | xargs setx WORKSPACE_DIR
+        run: echo "${{ env.GITHUB_WORKSPACE }}" | sed 's/\//\\/g' | sed 's/\\/\\\\/g' | xargs setx WORKSPACE_DIR
       # We build with our specific CI build command, which statically links Raylib
       - name: Build on Windows
         run: make build-win-ci
