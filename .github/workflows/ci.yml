@@ -30,7 +30,7 @@ jobs:
       - name: Archive artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ env.GAME_NAME }}-${{ env.RUNNER_OS }}
+          name: ${{ env.GAME_NAME }}-${{ runner.os }}
           path: build/${{ env.GAME_NAME }}.zip
 
   build-win:
@@ -58,5 +58,5 @@ jobs:
       - name: Archive artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ env.GAME_NAME }}-${{ env.RUNNER_OS }}
+          name: ${{ env.GAME_NAME }}-${{ runner.os }}
           path: build/${{ env.GAME_NAME }}.zip
