@@ -4,7 +4,7 @@ on: [push]
 
 env:
   RAYLIB_VERSION: 4.2.0
-  GAME_NAME: MoveSquare
+  GAME_NAME: ${{ github.event.repository.name }}
 
 jobs:
   build:
