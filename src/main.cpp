@@ -67,5 +67,6 @@ void DrawGame()
   BeginMode3D(camera);
   player.draw();
   EndMode3D();
+  DrawFPS(10, 10);
   EndDrawing();
 }
