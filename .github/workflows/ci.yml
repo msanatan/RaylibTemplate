@@ -49,7 +49,7 @@ jobs:
       # First, we set the WORKSPACE_DIR environment variable to the current directory, but with the correct path separators
       - name: Build on Windows
         run: |
-          $env:WORKSPACE_DIR = ${env:GITHUB_WORKSPACE}.Replace("/", "\").Replace("\", "\\")
+          $env:WORKSPACE_DIR = ${env:GITHUB_WORKSPACE}.Replace("\", "/")
           make build-win-ci
       # We then zip the game with 7z as it's already installed in the shared runner
       - name: Zip game build on Mac
