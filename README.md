@@ -1,4 +1,15 @@
-# MoveSquare
+# Raylib Template
 
-Basic Raylib project to get to grips with the framework. How to set up VS Code for debugging, CI/CD etc
+This is a template for a raylib project. It uses the make utility to build the project and includes a few useful things:
+
+- Basic Raylib 3d project
+- GitHub Actions for building for Windows and macOS
+- Your hopes and dreams
+
+## Requirements
+
+This template assumes you've install Raylib using either:
+
+- The Raylib installer on Windows
+- Homebrew on macOS
 
