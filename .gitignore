@@ -33,6 +33,7 @@
 
 # IDE
 .vscode
+.vs
 
 # Output files
 build
