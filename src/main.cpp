@@ -34,7 +34,7 @@ int main()
 
 // Run the game loop for web
 #if defined(PLATFORM_WEB)
-  emscripten_set_main_loop(UpdateAndDrawFrame, 60, 1);
+  emscripten_set_main_loop(UpdateAndDrawFrame, 0, 1);
 #else
   // Run the game loop for desktop platforms
   SetTargetFPS(60);            // Set our game to run at 60 frames-per-second
