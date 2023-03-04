@@ -13,10 +13,39 @@ static Player player = Player(0.0f, 0.0f, 0.0f, 2.0f);
 static Vector3 playerVelocity = {0.0f, 0.0f, 0.0f};
 static const float playerSpeed = 5.0f;
 
-// Function declarations
-static void UpdateAndDrawFrame();
-static void UpdateGame();
-static void DrawGame();
+void UpdateGame()
+{
+  playerVelocity = {0.0f, 0.0f, 0.0f};
+  // Update player position based on arrow key input
+  if (IsKeyDown(KEY_LEFT))
+    playerVelocity.x -= 1.0;
+  if (IsKeyDown(KEY_RIGHT))
+    playerVelocity.x += 1.0;
+  if (IsKeyDown(KEY_UP))
+    playerVelocity.z -= 1.0;
+  if (IsKeyDown(KEY_DOWN))
+    playerVelocity.z += 1.0;
+
+  playerVelocity = Vector3Scale(Vector3Normalize(playerVelocity), playerSpeed * GetFrameTime());
+  player.move(playerVelocity);
+}
+
+void DrawGame()
+{
+  BeginDrawing();
+  ClearBackground(RAYWHITE);
+  BeginMode3D(camera);
+  player.draw();
+  EndMode3D();
+  DrawFPS(10, 10);
+  EndDrawing();
+}
+
+void UpdateAndDrawFrame()
+{
+  UpdateGame();
+  DrawGame();
+}
 
 int main()
 {
@@ -46,38 +75,4 @@ int main()
   // De-Initialization
   CloseWindow(); // Close window and OpenGL context
   return 0;
-}
-
-void UpdateAndDrawFrame()
-{
-  UpdateGame();
-  DrawGame();
-}
-
-void UpdateGame()
-{
-  playerVelocity = {0.0f, 0.0f, 0.0f};
-  // Update player position based on arrow key input
-  if (IsKeyDown(KEY_LEFT))
-    playerVelocity.x -= 1.0;
-  if (IsKeyDown(KEY_RIGHT))
-    playerVelocity.x += 1.0;
-  if (IsKeyDown(KEY_UP))
-    playerVelocity.z -= 1.0;
-  if (IsKeyDown(KEY_DOWN))
-    playerVelocity.z += 1.0;
-
-  playerVelocity = Vector3Scale(Vector3Normalize(playerVelocity), playerSpeed * GetFrameTime());
-  player.move(playerVelocity);
-}
-
-void DrawGame()
-{
-  BeginDrawing();
-  ClearBackground(RAYWHITE);
-  BeginMode3D(camera);
-  player.draw();
-  EndMode3D();
-  DrawFPS(10, 10);
-  EndDrawing();
 }
