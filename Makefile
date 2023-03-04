@@ -8,7 +8,7 @@ LDFLAGS_MAC_CI = -framework CoreVideo -framework IOKit -framework Cocoa -framewo
 LDFLAGS_WIN = -lraylib -lopengl32 -lgdi32 -lwinmm -mwindows
 INCFLAGS_WIN = -IC:/raylib/raylib/src
 INCFLAGS_CI_WIN = -I${WORKSPACE_DIR}/raylib/include -L${WORKSPACE_DIR}/raylib/lib
-INCFLAGS_CI_WEB = ${WORKSPACE_DIR}/raylib/lib -I. -I${WORKSPACE_DIR}/raylib/include -L. -L${WORKSPACE_DIR}/raylib/lib
+INCFLAGS_CI_WEB = ${WORKSPACE_DIR}/raylib/lib/libraylib.a -I. -I${WORKSPACE_DIR}/raylib/include -L. -L${WORKSPACE_DIR}/raylib/lib
 
 SRC = src/*.cpp
 BUILDDIR = build
