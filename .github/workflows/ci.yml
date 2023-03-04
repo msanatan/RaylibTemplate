@@ -80,7 +80,7 @@ jobs:
       - name: Install Raylib for Web
         run: |
           curl -L https://github.com/raysan5/raylib/releases/download/${{ env.RAYLIB_VERSION }}/raylib-${{ env.RAYLIB_VERSION }}_webassembly.zip --output raylib.zip
-          unzip raylib.zip raylibwrapper
+          unzip raylib.zip -d raylibwrapper
           mv raylibwrapper/raylib-${{ env.RAYLIB_VERSION }}_webassembly raylib
       # We build with our specific CI build command, which statically links Raylib
       - name: Build for Web
