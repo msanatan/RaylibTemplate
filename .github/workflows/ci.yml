@@ -85,6 +85,8 @@ jobs:
       # We build with our specific CI build command, which statically links Raylib
       - name: Build for Web
         run: make build-web
+        env:
+          WORKSPACE_DIR: ${{ github.workspace }}
       # We then zip the game
       - name: Zip game build for Web
         run: cd build/${{ env.GAME_NAME }} && zip -r ${{ env.GAME_NAME }}.zip *
