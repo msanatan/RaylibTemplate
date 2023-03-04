@@ -9,6 +9,7 @@ INCFLAGS_WIN_CI = -I${WORKSPACE_DIR}/raylib/include -L${WORKSPACE_DIR}/raylib/li
 SRC = src/*.cpp
 BUILDDIR = build
 APP_NAME = $(shell basename "$(CURDIR)")
+export APP_NAME
 TARGET_MAC = $(BUILDDIR)/$(APP_NAME).app
 TARGET_WIN = $(BUILDDIR)/$(APP_NAME).exe
 
