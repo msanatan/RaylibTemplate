@@ -1,6 +1,11 @@
 #include "raylib.h"
 #include "raymath.h"
+#include <stdlib.h>
 #include "Player.h"
+
+#if defined(PLATFORM_WEB)
+#include <emscripten/emscripten.h>
+#endif
 
 // Global variables
 static Camera3D camera = {0};
@@ -9,6 +14,7 @@ static Vector3 playerVelocity = {0.0f, 0.0f, 0.0f};
 static const float playerSpeed = 5.0f;
 
 // Function declarations
+static void UpdateAndDrawFrame();
 static void UpdateGame();
 static void DrawGame();
 
@@ -17,7 +23,7 @@ int main()
   // Initialize Raylib window
   const int screenWidth = 1024;
   const int screenHeight = 768;
-  InitWindow(screenWidth, screenHeight, "Moving Cube");
+  InitWindow(screenWidth, screenHeight, getenv("APP_NAME"));
 
   // Initialize square position and size
   Rectangle square = {screenWidth / 2 - 20, screenHeight / 2 - 20, 40, 40};
@@ -29,18 +35,26 @@ int main()
   camera.fovy = 45.0f;                             // Camera field-of-view Y
   camera.projection = CAMERA_PERSPECTIVE;          // Camera mode type
 
-  SetTargetFPS(60); // Set the target frame rate to 60 FPS
-
-  // Main game loop
-  while (!WindowShouldClose())
+// Run the game loop for web
+#if defined(PLATFORM_WEB)
+  emscripten_set_main_loop(UpdateAndDrawFrame, 60, 1);
+#else
+  // Run the game loop for desktop platforms
+  SetTargetFPS(60);            // Set our game to run at 60 frames-per-second
+  while (!WindowShouldClose()) // Detect window close button or ESC key
   {
-    UpdateGame();
-    DrawGame();
+    UpdateAndDrawFrame();
   }
-
-  // Close Raylib window and clean up resources
-  CloseWindow();
+#endif
+  // De-Initialization
+  CloseWindow(); // Close window and OpenGL context
   return 0;
+}
+
+void UpdateAndDrawFrame()
+{
+  UpdateGame();
+  DrawGame();
 }
 
 void UpdateGame()
