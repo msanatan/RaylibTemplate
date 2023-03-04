@@ -1,7 +1,7 @@
 #include "raylib.h"
 #include "raymath.h"
 #include <stdlib.h>
-#include "Player.h"
+#include "player.h"
 
 #if defined(PLATFORM_WEB)
 #include <emscripten/emscripten.h>
