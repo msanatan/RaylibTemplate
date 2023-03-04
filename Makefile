@@ -11,7 +11,6 @@ INCFLAGS_CI_WIN = -I${WORKSPACE_DIR}/raylib/include -L${WORKSPACE_DIR}/raylib/li
 INCFLAGS_CI_WEB = ${WORKSPACE_DIR}/raylib/lib/libraylib.a -I${WORKSPACE_DIR}/src -I${WORKSPACE_DIR}/raylib/include -L${WORKSPACE_DIR}/raylib/lib
 
 SRC = src/*.cpp
-SRC_WEB = src/main.cpp
 BUILDDIR = build
 APP_NAME = $(shell basename "$(CURDIR)")
 export APP_NAME
@@ -34,7 +33,7 @@ build-win-ci: $(BUILDDIR)
 	$(CXX) $(CFLAGS) -static-libgcc -static-libstdc++ -static -lpthread $(INCFLAGS_CI_WIN) $(SRC) -o $(TARGET_WIN) $(LDFLAGS_WIN)
 
 build-web: $(BUILDDIR)
-	$(ECC) -o $(BUILDDIR)/$(APP_NAME)/index.html $(SRC_WEB) $(ECCFLAGS) $(INCFLAGS_CI_WEB) -s USE_GLFW=3 -DPLATFORM_WEB
+	$(ECC) -o $(BUILDDIR)/$(APP_NAME)/index.html $(SRC) $(ECCFLAGS) $(INCFLAGS_CI_WEB) -s USE_GLFW=3 -DPLATFORM_WEB
 
 run-mac:
 	$(TARGET_MAC)
