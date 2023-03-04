@@ -7,6 +7,7 @@ env:
   EMSCRIPTEN_VERSION: 3.1.32
   EMSCRIPTEN_CACHE_FOLDER: emsdk-cache
   GAME_NAME: ${{ github.event.repository.name }}
+  NODE_VERSION: 18.x
 
 jobs:
   build-mac:
@@ -75,6 +76,11 @@ jobs:
         with:
           version: ${{ env.EMSCRIPTEN_VERSION }}
           actions-cache-folder: ${{ env.EMSCRIPTEN_CACHE_FOLDER }}
+      # Update Node.js used by Emscripten
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
       # We download the prepackaged version of Raylib that works for emscripten
       # If we didn't download this version, we would need to compile Raylib for HTML5 builds
       - name: Install Raylib for Web
