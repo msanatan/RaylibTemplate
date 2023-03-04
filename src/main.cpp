@@ -25,9 +25,6 @@ int main()
   const int screenHeight = 768;
   InitWindow(screenWidth, screenHeight, getenv("APP_NAME"));
 
-  // Initialize square position and size
-  Rectangle square = {screenWidth / 2 - 20, screenHeight / 2 - 20, 40, 40};
-
   // Set up camera
   camera.position = (Vector3){0.0f, 10.0f, 10.0f}; // Camera position
   camera.target = (Vector3){0.0f, 0.0f, 0.0f};     // Camera looking at point
