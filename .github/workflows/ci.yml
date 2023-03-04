@@ -89,10 +89,10 @@ jobs:
           WORKSPACE_DIR: ${{ github.workspace }}
       # We then zip the game
       - name: Zip game build for Web
-        run: cd build/${{ env.GAME_NAME }} && zip -r ${{ env.GAME_NAME }}.zip *
+        run: cd build && zip -r ${{ env.GAME_NAME }}.zip *
       # Upload the artifacts for each OS
       - name: Archive artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ env.GAME_NAME }}-${{ runner.os }}
+          name: ${{ env.GAME_NAME }}-Web
           path: build/${{ env.GAME_NAME }}.zip
