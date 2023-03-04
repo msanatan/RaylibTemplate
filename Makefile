@@ -16,6 +16,7 @@ APP_NAME = $(shell basename "$(CURDIR)")
 export APP_NAME
 TARGET_MAC = $(BUILDDIR)/$(APP_NAME).app
 TARGET_WIN = $(BUILDDIR)/$(APP_NAME).exe
+TARGET_WEB = $(BUILDDIR)/index.html
 
 $(BUILDDIR):
 	mkdir -p $(BUILDDIR)
@@ -33,7 +34,7 @@ build-win-ci: $(BUILDDIR)
 	$(CXX) $(CFLAGS) -static-libgcc -static-libstdc++ -static -lpthread $(INCFLAGS_CI_WIN) $(SRC) -o $(TARGET_WIN) $(LDFLAGS_WIN)
 
 build-web: $(BUILDDIR)
-	$(ECC) -o $(BUILDDIR)/$(APP_NAME)/index.html $(SRC) $(ECCFLAGS) $(INCFLAGS_CI_WEB) -s USE_GLFW=3 -DPLATFORM_WEB
+	$(ECC) -o $(TARGET_WEB) $(SRC) $(ECCFLAGS) $(INCFLAGS_CI_WEB) -s USE_GLFW=3 -DPLATFORM_WEB
 
 run-mac:
 	$(TARGET_MAC)
