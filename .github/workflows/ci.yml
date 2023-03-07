@@ -4,7 +4,7 @@ on: [push]
 
 env:
   RAYLIB_VERSION: 4.2.0
-  EMSCRIPTEN_VERSION: 3.1.25
+  EMSCRIPTEN_VERSION: 3.1.15
   EMSCRIPTEN_CACHE_FOLDER: emsdk-cache
   GAME_NAME: ${{ github.event.repository.name }}
 
