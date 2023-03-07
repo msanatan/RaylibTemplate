@@ -4,7 +4,7 @@ on: [push]
 
 env:
   RAYLIB_VERSION: 4.2.0
-  EMSCRIPTEN_VERSION: 3.1.32
+  EMSCRIPTEN_VERSION: 3.1.25
   EMSCRIPTEN_CACHE_FOLDER: emsdk-cache
   GAME_NAME: ${{ github.event.repository.name }}
 
@@ -69,9 +69,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      # Install emscripten via Ubuntu packages
+      # We use the setup-emsdk action to install the Emscripten SDK
       - name: Setup emsdk
-        run: sudo apt-get install emscripten
+        uses: mymindstorm/setup-emsdk@v11
+        with:
+          version: ${{ env.EMSCRIPTEN_VERSION }}
+          actions-cache-folder: ${{ env.EMSCRIPTEN_CACHE_FOLDER }}
       # We download the prepackaged version of Raylib that works for emscripten
       # If we didn't download this version, we would need to compile Raylib for HTML5 builds
       - name: Install Raylib for Web
@@ -79,7 +82,6 @@ jobs:
           curl -L https://github.com/raysan5/raylib/releases/download/${{ env.RAYLIB_VERSION }}/raylib-${{ env.RAYLIB_VERSION }}_webassembly.zip --output raylib.zip
           unzip raylib.zip -d raylibwrapper
           mv raylibwrapper/raylib-${{ env.RAYLIB_VERSION }}_webassembly raylib
-          rm -rf raylibwrapper raylib.zip
       # We build with our specific CI build command, which statically links Raylib
       - name: Build for Web
         run: make build-web
