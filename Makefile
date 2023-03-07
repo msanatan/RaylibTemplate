@@ -1,8 +1,8 @@
 CC = cc
 CXX = g++
-ECC = emcc
+EXX = em++
 CFLAGS = -std=c++11
-ECCFLAGS = -Os -Wall
+EXXFLAGS = -Os -Wall -s USE_GLFW=3
 LDFLAGS_MAC = -framework IOKit -framework Cocoa -framework OpenGL `pkg-config --libs raylib`
 LDFLAGS_MAC_CI = -framework CoreVideo -framework IOKit -framework Cocoa -framework GLUT -framework OpenGL libraylib.a
 LDFLAGS_WIN = -lraylib -lopengl32 -lgdi32 -lwinmm -mwindows
@@ -34,7 +34,7 @@ build-win-ci: $(BUILDDIR)
 	$(CXX) $(CFLAGS) -static-libgcc -static-libstdc++ -static -lpthread $(INCFLAGS_CI_WIN) $(SRC) -o $(TARGET_WIN) $(LDFLAGS_WIN)
 
 build-web: $(BUILDDIR)
-	$(ECC) -o $(TARGET_WEB) $(SRC) $(ECCFLAGS) $(INCFLAGS_CI_WEB) -s USE_GLFW=3 -DPLATFORM_WEB
+	$(EXX) $(EXXFLAGS) $(SRC) -DPLATFORM_WEB $(INCFLAGS_CI_WEB) -o $(TARGET_WEB)
 
 run-mac:
 	$(TARGET_MAC)
