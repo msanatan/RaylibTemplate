@@ -4,6 +4,8 @@ on: [push]
 
 env:
   RAYLIB_VERSION: 4.2.0
+  EMSCRIPTEN_VERSION: 3.1.15
+  EMSCRIPTEN_CACHE_FOLDER: emsdk-cache
   GAME_NAME: ${{ github.event.repository.name }}
 
 jobs:
@@ -59,4 +61,42 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: ${{ env.GAME_NAME }}-${{ runner.os }}
+          path: build/${{ env.GAME_NAME }}.zip
+
+  build-web:
+    runs-on: ubuntu-22.04
+    if: contains(github.event.head_commit.message, 'skip-web') == false
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      # The setup-emsdk builds but app doesn't work, and the default Ubuntu version throws an error
+      # So we install the way emscripten recommends
+      - name: Install Emscripten
+        run: |
+          git clone https://github.com/emscripten-core/emsdk.git
+          cd emsdk
+          ./emsdk install ${{ env.EMSCRIPTEN_VERSION }}
+          ./emsdk activate ${{ env.EMSCRIPTEN_VERSION }}
+      # We download the prepackaged version of Raylib that works for emscripten
+      # If we didn't download this version, we would need to compile Raylib for HTML5 builds
+      - name: Install Raylib for Web
+        run: |
+          curl -L https://github.com/raysan5/raylib/releases/download/${{ env.RAYLIB_VERSION }}/raylib-${{ env.RAYLIB_VERSION }}_webassembly.zip --output raylib.zip
+          unzip raylib.zip -d raylibwrapper
+          mv raylibwrapper/raylib-${{ env.RAYLIB_VERSION }}_webassembly raylib
+      # We build with our specific CI build command, which statically links Raylib
+      - name: Build for Web
+        run: |
+          source ./emsdk/emsdk_env.sh
+          make build-web
+        env:
+          WORKSPACE_DIR: ${{ github.workspace }}
+      # We then zip the game
+      - name: Zip game build for Web
+        run: cd build && zip -r ${{ env.GAME_NAME }}.zip *
+      # Upload the artifacts for each OS
+      - name: Archive artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ env.GAME_NAME }}-Web
           path: build/${{ env.GAME_NAME }}.zip

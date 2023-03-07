@@ -1,6 +1,6 @@
 #include "raylib.h"
 #include "raymath.h"
-#include "Player.h"
+#include "player.h"
 
 Player::Player(float x, float y, float z, float size)
 {
