@@ -2,13 +2,13 @@ CC = cc
 CXX = g++
 EXX = em++
 CFLAGS = -std=c++11
-EXXFLAGS = -Os -Wall -s USE_GLFW=3
+EXXFLAGS = -Os -Wall -sUSE_GLFW=3 -sWASM=1
 LDFLAGS_MAC = -framework IOKit -framework Cocoa -framework OpenGL `pkg-config --libs raylib`
 LDFLAGS_MAC_CI = -framework CoreVideo -framework IOKit -framework Cocoa -framework GLUT -framework OpenGL libraylib.a
 LDFLAGS_WIN = -lraylib -lopengl32 -lgdi32 -lwinmm -mwindows
 INCFLAGS_WIN = -IC:/raylib/raylib/src
 INCFLAGS_CI_WIN = -I${WORKSPACE_DIR}/raylib/include -L${WORKSPACE_DIR}/raylib/lib
-INCFLAGS_CI_WEB = ${WORKSPACE_DIR}/raylib/lib/libraylib.a -I${WORKSPACE_DIR}/src -I${WORKSPACE_DIR}/raylib/include -L${WORKSPACE_DIR}/raylib/lib
+INCFLAGS_CI_WEB = raylib/lib/libraylib.a -Iraylib/include -Isrc -Lraylib/lib
 
 SRC = src/*.cpp
 BUILDDIR = build
