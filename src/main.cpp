@@ -1,6 +1,5 @@
 #include "raylib.h"
 #include "raymath.h"
-#include <stdlib.h>
 #include "player.h"
 
 #if defined(PLATFORM_WEB)
