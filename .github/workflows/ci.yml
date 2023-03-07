@@ -69,12 +69,16 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      # We use the setup-emsdk action to install the Emscripten SDK
-      - name: Setup emsdk
-        uses: mymindstorm/setup-emsdk@v12
-        with:
-          version: ${{ env.EMSCRIPTEN_VERSION }}
-          actions-cache-folder: ${{ env.EMSCRIPTEN_CACHE_FOLDER }}
+      # The setup-emsdk builds but app doesn't work, and the default Ubuntu version throws an error
+      # So we install the way emscripten recommends
+      - name: Install Emscripten
+        run: |
+          git clone https://github.com/emscripten-core/emsdk.git
+          cd emsdk
+          ./emsdk update
+          ./emsdk install ${{ env.EMSCRIPTEN_VERSION }}
+          ./emsdk activate ${{ env.EMSCRIPTEN_VERSION }}
+          source ./emsdk_env.sh
       # We download the prepackaged version of Raylib that works for emscripten
       # If we didn't download this version, we would need to compile Raylib for HTML5 builds
       - name: Install Raylib for Web
