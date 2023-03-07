@@ -77,7 +77,6 @@ jobs:
           cd emsdk
           ./emsdk install ${{ env.EMSCRIPTEN_VERSION }}
           ./emsdk activate ${{ env.EMSCRIPTEN_VERSION }}
-          source ./emsdk_env.sh
       # We download the prepackaged version of Raylib that works for emscripten
       # If we didn't download this version, we would need to compile Raylib for HTML5 builds
       - name: Install Raylib for Web
@@ -87,7 +86,9 @@ jobs:
           mv raylibwrapper/raylib-${{ env.RAYLIB_VERSION }}_webassembly raylib
       # We build with our specific CI build command, which statically links Raylib
       - name: Build for Web
-        run: make build-web
+        run: |
+          source ./emsdk/emsdk_env.sh
+          make build-web
         env:
           WORKSPACE_DIR: ${{ github.workspace }}
       # We then zip the game
