@@ -15,6 +15,14 @@ endif()
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# Web (HTML5) build settings (per raylib wiki)
+if(EMSCRIPTEN)
+  # Ensure raylib configures for Web and Emscripten provides GLFW symbols
+  set(PLATFORM Web CACHE STRING "" FORCE)
+  set(CMAKE_EXECUTABLE_SUFFIX ".html")
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s USE_GLFW=3 -s ASSERTIONS=1 -s WASM=1 -s ASYNCIFY -s GL_ENABLE_GET_PROC_ADDRESS=1")
+endif()
+
 # -------- Dependencies (FetchContent) --------
 include(FetchContent)
 set(RAYLIB_TAG 5.5)  # pin to raylib 5.5
