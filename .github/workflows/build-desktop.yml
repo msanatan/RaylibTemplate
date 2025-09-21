@@ -1,0 +1,28 @@
+name: build-desktop
+on: [push, pull_request]
+jobs:
+  desktop:
+    strategy:
+      matrix:
+        os: [macos-14, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: seanmiddleditch/gha-setup-ninja@v5
+      - name: Configure
+        run: cmake --preset ${{ runner.os == 'macOS' && 'macos-release' || 'windows-release' }}
+      - name: Build
+        run: cmake --build --preset ${{ runner.os == 'macOS' && 'build-macos' || 'build-windows' }} --parallel
+      - name: Package
+        shell: bash
+        run: |
+          mkdir -p dist
+          if [[ "$RUNNER_OS" == "Windows" ]]; then
+            cp build/windows-release/raygame.exe dist/
+          else
+            cp build/macos-release/raygame dist/
+          fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: raygame-${{ matrix.os }}
+          path: dist

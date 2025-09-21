@@ -1,14 +1,31 @@
 # Raylib Template
 
-This is a template for a raylib project. It uses the make utility to build the project and includes a few useful things:
+
+This is a template for a raylib project. It uses CMake and Ninja to build the project and includes a few useful things:
+
 
 - Basic Raylib 3d project
-- GitHub Actions for building for Windows, MacOS and HTML5
+- GitHub Actions for building for Windows, macOS, and HTML5
 - Your hopes and dreams
 
 ## Requirements
 
-This template assumes you've install Raylib using either:
+This template requires:
 
-- The Raylib installer on Windows
-- Homebrew on macOS
+- CMake
+- Ninja
+
+### macOS Setup (with Homebrew)
+
+```sh
+brew install cmake ninja
+```
+
+### General Build Instructions
+
+```sh
+cmake -B build -G Ninja
+cmake --build build
+```
+
+The built executable will be in the `build/` directory.

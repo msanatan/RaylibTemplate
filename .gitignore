@@ -11,6 +11,12 @@
 *.gch
 *.pch
 
+# Linker files
+*.ilk
+
+# Debugger Files
+*.pdb
+
 # Compiled Dynamic libraries
 *.so
 *.dylib
@@ -31,12 +37,11 @@
 *.out
 *.app
 
-# IDE
-.vscode
-.vs
-
-# Output files
-build
+# debug information files
+*.dwo
 
 # Mac
 .DS_Store
+
+build/
+bin/

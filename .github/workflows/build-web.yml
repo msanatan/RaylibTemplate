@@ -1,0 +1,23 @@
+name: build-web
+on: [push, pull_request]
+jobs:
+  web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: mymindstorm/setup-emsdk@v14
+        with: { version: latest }
+      - name: Configure (emcmake)
+        run: emcmake cmake --preset web-release
+      - name: Build
+        run: cmake --build --preset build-web --parallel
+      - name: Link to index.html
+        run: |
+          emcc build/web-release/CMakeFiles/raygame.dir/src/main.cpp.o \
+              build/web-release/_deps/raylib-build/raylib/libraylib.a \
+              -s USE_GLFW=3 -s ALLOW_MEMORY_GROWTH=1 -s ASYNCIFY \
+              -o build/web-release/index.html
+      - uses: actions/upload-artifact@v4
+        with:
+          name: raygame-web
+          path: build/web-release/index.html
