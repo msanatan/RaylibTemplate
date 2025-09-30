@@ -51,7 +51,13 @@ endif()
 # Assets dir macro (handy if you need it)
 target_compile_definitions(${PROJECT_NAME} PRIVATE ASSETS_PATH=\"$<IF:$<CONFIG:Debug>,${CMAKE_SOURCE_DIR}/assets,${CMAKE_SOURCE_DIR}/assets>\")
 
-# On macOS: no bundle
+# On macOS: create app bundle for distribution
 if(APPLE)
-  set_target_properties(${PROJECT_NAME} PROPERTIES MACOSX_BUNDLE FALSE)
+  set_target_properties(${PROJECT_NAME} PROPERTIES
+    MACOSX_BUNDLE TRUE
+    MACOSX_BUNDLE_GUI_IDENTIFIER "com.${PROJECT_NAME}.app"
+    MACOSX_BUNDLE_BUNDLE_NAME ${PROJECT_NAME}
+    MACOSX_BUNDLE_BUNDLE_VERSION "1.0"
+    MACOSX_BUNDLE_SHORT_VERSION_STRING "1.0"
+  )
 endif()
