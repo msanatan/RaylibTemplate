@@ -11,12 +11,17 @@ jobs:
         run: emcmake cmake --preset web-release -DPLATFORM=Web
       - name: Build
         run: cmake --build --preset build-web --parallel
+      - name: Get Project Name
+        id: project-name
+        run: |
+          PROJECT_NAME=$(grep -oP '^project\(\K[^ ]+' CMakeLists.txt)
+          echo "name=$PROJECT_NAME" >> $GITHUB_OUTPUT
       - name: Copy to index.html
         run: |
-          cp build/web-release/raygame.html build/web-release/index.html
+          cp build/web-release/${{ steps.project-name.outputs.name }}.html build/web-release/index.html
       - uses: actions/upload-artifact@v4
         with:
-          name: raygame-web
+          name: ${{ steps.project-name.outputs.name }}-web
           path: |
             build/web-release/index.html
-            build/web-release/raygame.*
+            build/web-release/${{ steps.project-name.outputs.name }}.*

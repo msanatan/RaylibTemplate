@@ -13,16 +13,25 @@ jobs:
         run: cmake --preset ${{ runner.os == 'macOS' && 'macos-release' || 'windows-release' }}
       - name: Build
         run: cmake --build --preset ${{ runner.os == 'macOS' && 'build-macos' || 'build-windows' }} --parallel
+      - name: Get Project Name
+        id: project-name
+        shell: bash
+        run: |
+          PROJECT_NAME=$(cmake --build build/${{ runner.os == 'macOS' && 'macos-release' || 'windows-release' }} --target help | grep -oP '^\.\.\. \K[^/]+(?=\.(exe)?$)' | head -1)
+          if [ -z "$PROJECT_NAME" ]; then
+            PROJECT_NAME=$(grep -oP '^project\(\K[^ ]+' CMakeLists.txt)
+          fi
+          echo "name=$PROJECT_NAME" >> $GITHUB_OUTPUT
       - name: Package
         shell: bash
         run: |
           mkdir -p dist
           if [[ "$RUNNER_OS" == "Windows" ]]; then
-            cp build/windows-release/raygame.exe dist/
+            cp build/windows-release/${{ steps.project-name.outputs.name }}.exe dist/
           else
-            cp build/macos-release/raygame dist/
+            cp build/macos-release/${{ steps.project-name.outputs.name }} dist/
           fi
       - uses: actions/upload-artifact@v4
         with:
-          name: raygame-${{ matrix.os }}
+          name: ${{ steps.project-name.outputs.name }}-${{ matrix.os }}
           path: dist

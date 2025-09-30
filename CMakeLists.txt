@@ -1,6 +1,7 @@
 
 cmake_minimum_required(VERSION 3.20)
 project(RaylibTemplate LANGUAGES CXX)
+set(PROJECT_NAME RaylibTemplate)
 
 # Defaults good for jams
 if(NOT CMAKE_BUILD_TYPE)
@@ -36,19 +37,19 @@ FetchContent_MakeAvailable(raylib)
 
 # -------- Your game --------
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS src/*.cpp)
-add_executable(raygame ${SOURCES})
-target_include_directories(raygame PRIVATE include)
-target_link_libraries(raygame PRIVATE raylib)
+add_executable(${PROJECT_NAME} ${SOURCES})
+target_include_directories(${PROJECT_NAME} PRIVATE include)
+target_link_libraries(${PROJECT_NAME} PRIVATE raylib)
 
 # Warnings
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang|AppleClang|GNU")
-  target_compile_options(raygame PRIVATE -Wall -Wextra -Wno-missing-field-initializers)
+  target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wno-missing-field-initializers)
 endif()
 
 # Assets dir macro (handy if you need it)
-target_compile_definitions(raygame PRIVATE ASSETS_PATH=\"$<IF:$<CONFIG:Debug>,${CMAKE_SOURCE_DIR}/assets,${CMAKE_SOURCE_DIR}/assets>\")
+target_compile_definitions(${PROJECT_NAME} PRIVATE ASSETS_PATH=\"$<IF:$<CONFIG:Debug>,${CMAKE_SOURCE_DIR}/assets,${CMAKE_SOURCE_DIR}/assets>\")
 
 # On macOS: no bundle
 if(APPLE)
-  set_target_properties(raygame PROPERTIES MACOSX_BUNDLE FALSE)
+  set_target_properties(${PROJECT_NAME} PROPERTIES MACOSX_BUNDLE FALSE)
 endif()
