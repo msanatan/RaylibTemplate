@@ -6,6 +6,14 @@
     },
     "configurePresets": [
         {
+            "name": "macos-debug",
+            "generator": "Ninja",
+            "binaryDir": "build/macos-debug",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
             "name": "macos-release",
             "generator": "Ninja",
             "binaryDir": "build/macos-release",
@@ -14,11 +22,27 @@
             }
         },
         {
+            "name": "windows-debug",
+            "generator": "Ninja",
+            "binaryDir": "build/windows-debug",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
             "name": "windows-release",
             "generator": "Ninja",
             "binaryDir": "build/windows-release",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
+            "name": "web-debug",
+            "generator": "Ninja",
+            "binaryDir": "build/web-debug",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
             }
         },
         {
@@ -32,12 +56,24 @@
     ],
     "buildPresets": [
         {
+            "name": "build-macos-debug",
+            "configurePreset": "macos-debug"
+        },
+        {
             "name": "build-macos",
             "configurePreset": "macos-release"
         },
         {
+            "name": "build-windows-debug",
+            "configurePreset": "windows-debug"
+        },
+        {
             "name": "build-windows",
             "configurePreset": "windows-release"
+        },
+        {
+            "name": "build-web-debug",
+            "configurePreset": "web-debug"
         },
         {
             "name": "build-web",
