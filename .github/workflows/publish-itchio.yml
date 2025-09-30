@@ -1,12 +1,9 @@
 name: Publish to itch.io
 
 on:
-  workflow_dispatch:
-    inputs:
-      run_id:
-        description: 'Run ID to download artifacts from (leave empty for latest)'
-        required: false
-        type: string
+  workflow_run:
+    workflows: ["build-desktop", "build-web"]
+    types: [completed]
 
 env:
   ITCH_USER: ${{ vars.ITCH_USER }}
@@ -15,6 +12,9 @@ env:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    if: github.event.workflow_run.conclusion == 'success'
+    environment:
+      name: itch-io-production
     strategy:
       matrix:
         platform: [windows, macos, web]
@@ -32,6 +32,8 @@ jobs:
         with:
           name: ${{ steps.project-name.outputs.name }}-${{ matrix.platform == 'windows' && 'windows-latest' || matrix.platform == 'macos' && 'macos-latest' || 'web' }}
           path: dist
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
 
       - name: Publish to itch.io
         uses: yeslayla/butler-publish-itchio-action@v1.0.3
