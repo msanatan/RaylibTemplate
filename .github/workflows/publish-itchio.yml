@@ -1,0 +1,43 @@
+name: Publish to itch.io
+
+on:
+  workflow_dispatch:
+    inputs:
+      run_id:
+        description: 'Run ID to download artifacts from (leave empty for latest)'
+        required: false
+        type: string
+
+env:
+  ITCH_USER: ${{ vars.ITCH_USER }}
+  ITCH_GAME: ${{ vars.ITCH_GAME }}
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        platform: [windows, macos, web]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Get Project Name
+        id: project-name
+        run: |
+          PROJECT_NAME=$(grep '^project(' CMakeLists.txt | sed 's/project(\([^ ]*\).*/\1/')
+          echo "name=$PROJECT_NAME" >> $GITHUB_OUTPUT
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ steps.project-name.outputs.name }}-${{ matrix.platform == 'windows' && 'windows-latest' || matrix.platform == 'macos' && 'macos-latest' || 'web' }}
+          path: dist
+
+      - name: Publish to itch.io
+        uses: yeslayla/butler-publish-itchio-action@v1.0.3
+        env:
+          BUTLER_CREDENTIALS: ${{ secrets.BUTLER_CREDENTIALS }}
+          CHANNEL: ${{ matrix.platform == 'windows' && 'windows' || matrix.platform == 'macos' && 'mac' || 'html5' }}
+          ITCH_GAME: ${{ env.ITCH_GAME }}
+          ITCH_USER: ${{ env.ITCH_USER }}
+          PACKAGE: dist
