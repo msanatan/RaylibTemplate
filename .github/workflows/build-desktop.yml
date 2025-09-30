@@ -17,10 +17,7 @@ jobs:
         id: project-name
         shell: bash
         run: |
-          PROJECT_NAME=$(cmake --build build/${{ runner.os == 'macOS' && 'macos-release' || 'windows-release' }} --target help | grep -oP '^\.\.\. \K[^/]+(?=\.(exe)?$)' | head -1)
-          if [ -z "$PROJECT_NAME" ]; then
-            PROJECT_NAME=$(grep -oP '^project\(\K[^ ]+' CMakeLists.txt)
-          fi
+          PROJECT_NAME=$(grep '^project(' CMakeLists.txt | sed 's/project(\([^ ]*\).*/\1/')
           echo "name=$PROJECT_NAME" >> $GITHUB_OUTPUT
       - name: Package
         shell: bash
@@ -29,7 +26,7 @@ jobs:
           if [[ "$RUNNER_OS" == "Windows" ]]; then
             cp build/windows-release/${{ steps.project-name.outputs.name }}.exe dist/
           else
-            cp build/macos-release/${{ steps.project-name.outputs.name }} dist/
+            cp -r build/macos-release/${{ steps.project-name.outputs.name }}.app dist/
           fi
       - uses: actions/upload-artifact@v4
         with:
