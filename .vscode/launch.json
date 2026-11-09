@@ -2,12 +2,13 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "raygame (lldb)",
+            "name": "Debug",
             "type": "cppdbg",
             "request": "launch",
             "program": "${command:cmake.launchTargetPath}",
             "cwd": "${workspaceFolder}",
-            "MIMode": "lldb"
+            "MIMode": "lldb",
+            "preLaunchTask": "CMake: build"
         }
     ]
 }

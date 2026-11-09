@@ -28,7 +28,7 @@ endif()
 # -------- Dependencies (FetchContent) --------
 include(FetchContent)
 set(FETCHCONTENT_QUIET OFF)  # Show download progress
-set(RAYLIB_TAG 5.5)  # pin to raylib 5.5
+set(RAYLIB_TAG 6.2)
 FetchContent_Declare(raylib
   GIT_REPOSITORY https://github.com/raysan5/raylib.git
   GIT_TAG        ${RAYLIB_TAG}
@@ -51,6 +51,7 @@ endif()
 
 # Assets dir macro (handy if you need it)
 target_compile_definitions(${PROJECT_NAME} PRIVATE ASSETS_PATH=\"$<IF:$<CONFIG:Debug>,${CMAKE_SOURCE_DIR}/assets,${CMAKE_SOURCE_DIR}/assets>\")
+target_compile_definitions(${PROJECT_NAME} PRIVATE GAME_TITLE=\"${PROJECT_NAME}\")
 
 # On macOS: create app bundle for distribution
 if(APPLE)

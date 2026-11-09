@@ -7,7 +7,7 @@
 #endif
 
 // Global variables
-static Camera3D camera = {0};
+static Camera3D camera = {};
 static Player player = Player(0.0f, 0.0f, 0.0f, 2.0f);
 static Vector3 playerVelocity = {0.0f, 0.0f, 0.0f};
 static const float playerSpeed = 5.0f;
@@ -51,7 +51,7 @@ int main()
   // Initialize Raylib window
   const int screenWidth = 1024;
   const int screenHeight = 768;
-  InitWindow(screenWidth, screenHeight, getenv("APP_NAME"));
+  InitWindow(screenWidth, screenHeight, GAME_TITLE);
 
   // Set up camera
   camera.position = (Vector3){0.0f, 10.0f, 10.0f}; // Camera position
