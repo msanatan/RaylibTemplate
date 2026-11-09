@@ -6,9 +6,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: mymindstorm/setup-emsdk@v14
-        with: { version: latest }
+        with: { version: 7.0.0 }
       - name: Configure (emcmake)
-        run: emcmake cmake --preset web-release -DPLATFORM=Web
+        run: emcmake cmake --preset web-release
       - name: Build
         run: cmake --build --preset build-web --parallel
       - name: Get Project Name

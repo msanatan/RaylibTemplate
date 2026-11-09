@@ -22,7 +22,7 @@ if(EMSCRIPTEN)
   # Ensure raylib configures for Web and Emscripten provides GLFW symbols
   set(PLATFORM Web CACHE STRING "" FORCE)
   set(CMAKE_EXECUTABLE_SUFFIX ".html")
-  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s USE_GLFW=3 -s ASSERTIONS=1 -s WASM=1 -s ASYNCIFY -s GL_ENABLE_GET_PROC_ADDRESS=1")
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s USE_GLFW=3 -s WASM=1 -s GL_ENABLE_GET_PROC_ADDRESS=1")
 endif()
 
 # -------- Dependencies (FetchContent) --------
@@ -43,6 +43,17 @@ file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS src/*.cpp)
 add_executable(${PROJECT_NAME} ${SOURCES})
 target_include_directories(${PROJECT_NAME} PRIVATE include)
 target_link_libraries(${PROJECT_NAME} PRIVATE raylib)
+
+if(EMSCRIPTEN)
+  set(WEB_SHELL_FILE ${CMAKE_BINARY_DIR}/shell.html)
+  configure_file(${CMAKE_SOURCE_DIR}/web/shell.html.in ${WEB_SHELL_FILE} @ONLY)
+  target_link_options(${PROJECT_NAME} PRIVATE
+    --shell-file ${WEB_SHELL_FILE}
+    $<$<CONFIG:Debug>:-sASSERTIONS=1>
+  )
+  # Emscripten doesn't track the shell file, so edits to it wouldn't trigger a relink
+  set_target_properties(${PROJECT_NAME} PROPERTIES LINK_DEPENDS ${WEB_SHELL_FILE})
+endif()
 
 # Warnings
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang|AppleClang|GNU")

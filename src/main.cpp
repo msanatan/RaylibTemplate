@@ -51,6 +51,10 @@ int main()
   // Initialize Raylib window
   const int screenWidth = 1024;
   const int screenHeight = 768;
+#if defined(PLATFORM_WEB)
+  // raylib resizes the canvas to fill the browser window (or itch.io iframe) when this is set
+  SetConfigFlags(FLAG_WINDOW_RESIZABLE);
+#endif
   InitWindow(screenWidth, screenHeight, GAME_TITLE);
 
   // Set up camera
