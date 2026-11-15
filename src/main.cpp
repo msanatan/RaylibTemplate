@@ -1,12 +1,22 @@
 #include "raylib.h"
 #include "raymath.h"
+#include "assets.h"
 #include "player.h"
+#include "splash.h"
 
 #if defined(PLATFORM_WEB)
 #include <emscripten/emscripten.h>
 #endif
 
+enum class Screen
+{
+  Splash,
+  Game
+};
+
 // Global variables
+static Screen currentScreen = Screen::Splash;
+static Splash splash;
 static Camera3D camera = {};
 static Player player = Player(0.0f, 0.0f, 0.0f, 2.0f);
 static Vector3 playerVelocity = {0.0f, 0.0f, 0.0f};
@@ -31,19 +41,39 @@ void UpdateGame()
 
 void DrawGame()
 {
-  BeginDrawing();
   ClearBackground(RAYWHITE);
   BeginMode3D(camera);
   player.draw();
   EndMode3D();
   DrawFPS(10, 10);
-  EndDrawing();
 }
 
 void UpdateAndDrawFrame()
 {
-  UpdateGame();
-  DrawGame();
+  if (currentScreen == Screen::Splash)
+  {
+    splash.update(GetFrameTime());
+    if (splash.isFinished())
+    {
+      splash.unload();
+      currentScreen = Screen::Game;
+    }
+  }
+  else
+  {
+    UpdateGame();
+  }
+
+  BeginDrawing();
+  if (currentScreen == Screen::Splash)
+  {
+    splash.draw();
+  }
+  else
+  {
+    DrawGame();
+  }
+  EndDrawing();
 }
 
 int main()
@@ -56,6 +86,7 @@ int main()
   SetConfigFlags(FLAG_WINDOW_RESIZABLE);
 #endif
   InitWindow(screenWidth, screenHeight, GAME_TITLE);
+  InitAssets();
 
   // Set up camera
   camera.position = (Vector3){0.0f, 10.0f, 10.0f}; // Camera position
@@ -63,6 +94,8 @@ int main()
   camera.up = (Vector3){0.0f, 1.0f, 0.0f};         // Camera up vector (rotation towards target)
   camera.fovy = 45.0f;                             // Camera field-of-view Y
   camera.projection = CAMERA_PERSPECTIVE;          // Camera mode type
+
+  splash.load();
 
 // Run the game loop for web
 #if defined(PLATFORM_WEB)
@@ -76,6 +109,11 @@ int main()
   }
 #endif
   // De-Initialization
+  if (currentScreen == Screen::Splash)
+  {
+    splash.unload();
+  }
+  CloseAssets();
   CloseWindow(); // Close window and OpenGL context
   return 0;
 }

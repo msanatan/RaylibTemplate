@@ -25,6 +25,7 @@ jobs:
           mkdir -p dist
           if [[ "$RUNNER_OS" == "Windows" ]]; then
             cp build/windows-release/${{ steps.project-name.outputs.name }}.exe dist/
+            cp build/windows-release/assets.pak dist/
           else
             cp -r build/macos-release/${{ steps.project-name.outputs.name }}.app dist/
           fi
