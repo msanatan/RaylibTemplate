@@ -18,6 +18,11 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+option(BUILD_EDITOR "Build the desktop 3D editor" OFF)
+if(BUILD_EDITOR AND EMSCRIPTEN)
+  message(FATAL_ERROR "The editor requires a desktop build")
+endif()
+
 # Web (HTML5) build settings (per raylib wiki)
 if(EMSCRIPTEN)
   # Ensure raylib configures for Web and Emscripten provides GLFW symbols
@@ -67,6 +72,10 @@ target_link_libraries(game PUBLIC raylib)
 add_executable(${PROJECT_NAME} src/main.cpp)
 target_link_libraries(${PROJECT_NAME} PRIVATE game)
 
+if(BUILD_EDITOR)
+  add_subdirectory(editor)
+endif()
+
 # -------- Assets --------
 include(cmake/Assets.cmake)
 
@@ -102,9 +111,12 @@ if(NOT EMSCRIPTEN)
     set(LINT_EXTRA_ARGS --extra-arg=-isysroot${MACOS_SDK})
   endif()
   file(GLOB_RECURSE LINT_TEST_SOURCES CONFIGURE_DEPENDS tests/*.cpp)
+  if(BUILD_EDITOR)
+    file(GLOB_RECURSE LINT_EDITOR_SOURCES CONFIGURE_DEPENDS editor/src/*.cpp)
+  endif()
   add_custom_target(lint
     COMMAND uvx --from clang-tidy==${CLANG_TIDY_VERSION} clang-tidy -p ${CMAKE_BINARY_DIR} --quiet ${LINT_EXTRA_ARGS}
-            ${SOURCES} ${CMAKE_SOURCE_DIR}/src/main.cpp ${LINT_TEST_SOURCES}
+            ${SOURCES} ${CMAKE_SOURCE_DIR}/src/main.cpp ${LINT_TEST_SOURCES} ${LINT_EDITOR_SOURCES}
     USES_TERMINAL
   )
 endif()

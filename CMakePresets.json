@@ -10,7 +10,8 @@
             "generator": "Ninja",
             "binaryDir": "build/macos-debug",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Debug"
+                "CMAKE_BUILD_TYPE": "Debug",
+                "BUILD_EDITOR": "OFF"
             }
         },
         {
@@ -18,7 +19,8 @@
             "generator": "Ninja",
             "binaryDir": "build/macos-release",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Release"
+                "CMAKE_BUILD_TYPE": "Release",
+                "BUILD_EDITOR": "OFF"
             }
         },
         {
@@ -26,7 +28,8 @@
             "generator": "Ninja",
             "binaryDir": "build/windows-debug",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Debug"
+                "CMAKE_BUILD_TYPE": "Debug",
+                "BUILD_EDITOR": "OFF"
             }
         },
         {
@@ -34,7 +37,8 @@
             "generator": "Ninja",
             "binaryDir": "build/windows-release",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Release"
+                "CMAKE_BUILD_TYPE": "Release",
+                "BUILD_EDITOR": "OFF"
             }
         },
         {
@@ -42,7 +46,8 @@
             "generator": "Ninja",
             "binaryDir": "build/web-debug",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Debug"
+                "CMAKE_BUILD_TYPE": "Debug",
+                "BUILD_EDITOR": "OFF"
             }
         },
         {
@@ -50,7 +55,24 @@
             "generator": "Ninja",
             "binaryDir": "build/web-release",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Release"
+                "CMAKE_BUILD_TYPE": "Release",
+                "BUILD_EDITOR": "OFF"
+            }
+        },
+        {
+            "name": "macos-editor",
+            "inherits": "macos-debug",
+            "binaryDir": "build/macos-editor",
+            "cacheVariables": {
+                "BUILD_EDITOR": "ON"
+            }
+        },
+        {
+            "name": "windows-editor",
+            "inherits": "windows-debug",
+            "binaryDir": "build/windows-editor",
+            "cacheVariables": {
+                "BUILD_EDITOR": "ON"
             }
         }
     ],
@@ -78,6 +100,14 @@
         {
             "name": "build-web",
             "configurePreset": "web-release"
+        },
+        {
+            "name": "build-macos-editor",
+            "configurePreset": "macos-editor"
+        },
+        {
+            "name": "build-windows-editor",
+            "configurePreset": "windows-editor"
         }
     ],
     "testPresets": [

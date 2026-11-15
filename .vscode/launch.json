@@ -9,6 +9,22 @@
             "cwd": "${workspaceFolder}",
             "MIMode": "lldb",
             "preLaunchTask": "CMake: build"
+        },
+        {
+            "name": "Debug Tuni",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/editor-debug/bin/Tuni",
+            "cwd": "${workspaceFolder}",
+            "MIMode": "gdb",
+            "osx": {
+                "program": "${workspaceFolder}/build/macos-editor/bin/Tuni",
+                "MIMode": "lldb"
+            },
+            "windows": {
+                "program": "${workspaceFolder}/build/windows-editor/bin/Tuni.exe"
+            },
+            "preLaunchTask": "Tuni: build"
         }
     ]
 }

@@ -13,11 +13,22 @@ cmake --build build
 
 The executable is under `build/` (inside `RaylibTemplate.app/Contents/MacOS/` on macOS). Other platform and configuration presets are in [CMakePresets.json](CMakePresets.json).
 
+Tuni (this is not Unity), is used for placing 3D objects at edit time.
+
+```sh
+cmake --preset macos-editor
+cmake --build --preset build-macos-editor
+./build/macos-editor/bin/Tuni
+```
+
+Default, release, and web presets leave the editor disabled.
+
 ## Where to work
 
 ```text
 src/main.cpp   startup and main loop
 src/core/      reusable systems: assets, input, scenes, testing, UI, logging
+editor/src/    Tuni desktop editor
 src/scenes/    screens and scene registration
 src/game/      game rules, entities, and input bindings
 assets/        game assets

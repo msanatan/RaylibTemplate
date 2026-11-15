@@ -8,6 +8,7 @@ get_filename_component(PROJECT_ROOT ${CMAKE_CURRENT_LIST_DIR}/.. ABSOLUTE)
 file(GLOB_RECURSE FORMAT_FILES
   ${PROJECT_ROOT}/src/*.cpp ${PROJECT_ROOT}/src/*.h
   ${PROJECT_ROOT}/tests/*.cpp ${PROJECT_ROOT}/tests/*.h
+  ${PROJECT_ROOT}/editor/src/*.cpp ${PROJECT_ROOT}/editor/src/*.h
 )
 
 if(CHECK)
