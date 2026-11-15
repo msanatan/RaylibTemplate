@@ -1,5 +1,5 @@
-#ifndef SPLASH_H
-#define SPLASH_H
+#ifndef GBM_SPLASH_H
+#define GBM_SPLASH_H
 
 #include "core/scene.h"
 #include "raylib.h"
@@ -20,4 +20,4 @@ private:
   float logoAlpha() const;
 };
 
-#endif // !SPLASH_H
+#endif // !GBM_SPLASH_H

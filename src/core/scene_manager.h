@@ -1,5 +1,5 @@
-#ifndef SCENE_MANAGER_H
-#define SCENE_MANAGER_H
+#ifndef GBM_SCENE_MANAGER_H
+#define GBM_SCENE_MANAGER_H
 
 #include <functional>
 #include <memory>
@@ -65,4 +65,4 @@ private:
   std::vector<PendingChange> pending;
 };
 
-#endif // !SCENE_MANAGER_H
+#endif // !GBM_SCENE_MANAGER_H

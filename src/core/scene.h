@@ -1,5 +1,5 @@
-#ifndef SCENE_H
-#define SCENE_H
+#ifndef GBM_SCENE_H
+#define GBM_SCENE_H
 
 class SceneManager;
 
@@ -21,4 +21,4 @@ protected:
   SceneManager &scenes;
 };
 
-#endif // !SCENE_H
+#endif // !GBM_SCENE_H

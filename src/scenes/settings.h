@@ -1,5 +1,5 @@
-#ifndef SETTINGS_H
-#define SETTINGS_H
+#ifndef GBM_SETTINGS_H
+#define GBM_SETTINGS_H
 
 #include "core/scene.h"
 #include "core/ui.h"
@@ -18,4 +18,4 @@ private:
   int fullscreenItem = -1;
 };
 
-#endif // !SETTINGS_H
+#endif // !GBM_SETTINGS_H

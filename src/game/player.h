@@ -1,5 +1,5 @@
-#ifndef PLAYER_H
-#define PLAYER_H
+#ifndef GBM_PLAYER_H
+#define GBM_PLAYER_H
 
 #include "raylib.h"
 
@@ -14,4 +14,4 @@ public:
   void move(Vector3 velocity);
 };
 
-#endif // !PLAYER_H
+#endif // !GBM_PLAYER_H

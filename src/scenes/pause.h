@@ -1,5 +1,5 @@
-#ifndef PAUSE_H
-#define PAUSE_H
+#ifndef GBM_PAUSE_H
+#define GBM_PAUSE_H
 
 #include "core/scene.h"
 #include "core/ui.h"
@@ -17,4 +17,4 @@ private:
   Menu menu;
 };
 
-#endif // !PAUSE_H
+#endif // !GBM_PAUSE_H

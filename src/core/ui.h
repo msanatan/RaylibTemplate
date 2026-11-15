@@ -1,5 +1,5 @@
-#ifndef UI_H
-#define UI_H
+#ifndef GBM_UI_H
+#define GBM_UI_H
 
 #include <functional>
 #include <string>
@@ -32,4 +32,4 @@ private:
   int selected = 0;
 };
 
-#endif // !UI_H
+#endif // !GBM_UI_H

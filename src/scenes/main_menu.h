@@ -1,5 +1,5 @@
-#ifndef MAIN_MENU_H
-#define MAIN_MENU_H
+#ifndef GBM_MAIN_MENU_H
+#define GBM_MAIN_MENU_H
 
 #include "core/scene.h"
 #include "core/ui.h"
@@ -16,4 +16,4 @@ private:
   Menu menu;
 };
 
-#endif // !MAIN_MENU_H
+#endif // !GBM_MAIN_MENU_H

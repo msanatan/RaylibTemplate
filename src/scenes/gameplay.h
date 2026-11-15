@@ -1,5 +1,5 @@
-#ifndef GAMEPLAY_H
-#define GAMEPLAY_H
+#ifndef GBM_GAMEPLAY_H
+#define GBM_GAMEPLAY_H
 
 #include "core/scene.h"
 #include "game/player.h"
@@ -18,4 +18,4 @@ private:
   Player player = Player(0.0f, 0.0f, 0.0f, 2.0f);
 };
 
-#endif // !GAMEPLAY_H
+#endif // !GBM_GAMEPLAY_H

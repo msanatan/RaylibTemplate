@@ -1,5 +1,5 @@
-#ifndef ASSETS_H
-#define ASSETS_H
+#ifndef GBM_ASSETS_H
+#define GBM_ASSETS_H
 
 #include <string>
 
@@ -18,4 +18,4 @@ Sound LoadGameSound(const std::string &relativePath);
 Music LoadGameMusic(const std::string &relativePath);
 void UnloadGameMusic(Music music);
 
-#endif // !ASSETS_H
+#endif // !GBM_ASSETS_H

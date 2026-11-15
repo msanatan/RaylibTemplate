@@ -1,5 +1,5 @@
-#ifndef PAK_H
-#define PAK_H
+#ifndef GBM_PAK_H
+#define GBM_PAK_H
 
 #include <string>
 
@@ -12,4 +12,4 @@ void UnmountPak();
 Music LoadPakMusic(const std::string &entry);
 void UnloadPakMusic(Music music);
 
-#endif // !PAK_H
+#endif // !GBM_PAK_H
