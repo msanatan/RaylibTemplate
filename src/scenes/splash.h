@@ -1,21 +1,21 @@
 #ifndef SPLASH_H
 #define SPLASH_H
 
+#include "core/scene.h"
 #include "raylib.h"
 
-class Splash
+class SplashScene : public Scene
 {
 public:
-  void load();
-  void unload();
-  void update(float deltaTime);
-  void draw() const;
-  bool isFinished() const;
+  explicit SplashScene(SceneManager &scenes);
+  ~SplashScene() override;
+
+  void update(float deltaTime) override;
+  void draw() const override;
 
 private:
   Texture2D logo = {};
   float elapsed = 0.0f;
-  bool skipped = false;
 
   float logoAlpha() const;
 };

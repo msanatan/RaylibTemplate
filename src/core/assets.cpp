@@ -1,7 +1,7 @@
-#include "assets.h"
+#include "core/assets.h"
 
 #if defined(ASSETS_PAK_PATH)
-#include "pak.h"
+#include "core/pak.h"
 #endif
 
 namespace

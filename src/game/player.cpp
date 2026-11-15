@@ -1,6 +1,6 @@
 #include "raylib.h"
 #include "raymath.h"
-#include "player.h"
+#include "game/player.h"
 
 Player::Player(float x, float y, float z, float size)
 {
@@ -8,7 +8,7 @@ Player::Player(float x, float y, float z, float size)
   this->size = size;
 }
 
-void Player::draw()
+void Player::draw() const
 {
   DrawCube(this->position, this->size, this->size, this->size, RED);
   DrawCubeWires(this->position, this->size, this->size, this->size, MAROON);

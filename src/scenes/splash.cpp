@@ -1,12 +1,15 @@
-#include "splash.h"
+#include "scenes/splash.h"
 
 #include <algorithm>
 
-#include "assets.h"
+#include "core/assets.h"
+#include "core/scene_manager.h"
+#include "scenes/main_menu.h"
 
 namespace
 {
-const Color backgroundColor = {11, 15, 31, 255};
+// #FFDE59
+const Color backgroundColor = {255, 222, 89, 255};
 const float fadeInDuration = 0.5f;
 const float holdDuration = 2.0f;
 const float fadeOutDuration = 0.5f;
@@ -14,32 +17,30 @@ const float totalDuration = fadeInDuration + holdDuration + fadeOutDuration;
 const float logoScreenFraction = 0.5f;
 } // namespace
 
-void Splash::load()
+SplashScene::SplashScene(SceneManager &scenes) : Scene(scenes)
 {
   logo = LoadGameTexture("branding/logo.png");
   // The logo is drawn far below its source size, and plain bilinear filtering aliases badly at that ratio
   GenTextureMipmaps(&logo);
   SetTextureFilter(logo, TEXTURE_FILTER_TRILINEAR);
-  elapsed = 0.0f;
-  skipped = false;
 }
 
-void Splash::unload()
+SplashScene::~SplashScene()
 {
   UnloadTexture(logo);
-  logo = {};
 }
 
-void Splash::update(float deltaTime)
+void SplashScene::update(float deltaTime)
 {
   elapsed += deltaTime;
-  if (GetKeyPressed() != 0 || IsMouseButtonPressed(MOUSE_BUTTON_LEFT) || IsGestureDetected(GESTURE_TAP))
+  const bool skipped = GetKeyPressed() != 0 || IsMouseButtonPressed(MOUSE_BUTTON_LEFT) || IsGestureDetected(GESTURE_TAP);
+  if (skipped || elapsed >= totalDuration)
   {
-    skipped = true;
+    scenes.replace<MainMenuScene>();
   }
 }
 
-void Splash::draw() const
+void SplashScene::draw() const
 {
   ClearBackground(backgroundColor);
 
@@ -51,12 +52,7 @@ void Splash::draw() const
   DrawTexturePro(logo, source, dest, {0.0f, 0.0f}, 0.0f, Fade(WHITE, logoAlpha()));
 }
 
-bool Splash::isFinished() const
-{
-  return skipped || elapsed >= totalDuration;
-}
-
-float Splash::logoAlpha() const
+float SplashScene::logoAlpha() const
 {
   if (elapsed < fadeInDuration)
   {

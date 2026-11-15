@@ -10,7 +10,7 @@ public:
   float size;
 
   Player(float x, float y, float z, float size);
-  void draw();
+  void draw() const;
   void move(Vector3 velocity);
 };
 
