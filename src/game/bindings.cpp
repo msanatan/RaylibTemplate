@@ -1,6 +1,6 @@
 #include "game/bindings.h"
 
-#include "core/input.h"
+#include "core/input/input.h"
 
 void BindGameInput() {
   // The ui_* actions are the ones core/ui.cpp asks about, so every game needs

@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include "core/scene.h"
+#include "core/scenes/scene.h"
 #include "game/player.h"
 #include "raylib.h"
 

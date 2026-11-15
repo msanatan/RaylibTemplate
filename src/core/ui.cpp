@@ -1,6 +1,6 @@
 #include "core/ui.h"
 
-#include "core/input.h"
+#include "core/input/input.h"
 
 namespace {
 const int itemFontSize = 32;

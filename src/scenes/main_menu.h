@@ -1,7 +1,7 @@
 #ifndef GBM_MAIN_MENU_H
 #define GBM_MAIN_MENU_H
 
-#include "core/scene.h"
+#include "core/scenes/scene.h"
 #include "core/ui.h"
 
 class MainMenuScene : public Scene {

@@ -2,8 +2,8 @@
 
 #include <sstream>
 
-#include "core/input.h"
-#include "core/scene_manager.h"
+#include "core/input/input.h"
+#include "core/scenes/scene_manager.h"
 #include "raymath.h"
 #include "scenes/pause.h"
 

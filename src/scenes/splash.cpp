@@ -2,8 +2,8 @@
 
 #include <algorithm>
 
-#include "core/assets.h"
-#include "core/scene_manager.h"
+#include "core/assets/assets.h"
+#include "core/scenes/scene_manager.h"
 #include "scenes/main_menu.h"
 
 namespace {

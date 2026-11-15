@@ -1,4 +1,4 @@
-#include "core/scene_manager.h"
+#include "core/scenes/scene_manager.h"
 
 #include <sstream>
 

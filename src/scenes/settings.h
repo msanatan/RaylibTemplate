@@ -1,7 +1,7 @@
 #ifndef GBM_SETTINGS_H
 #define GBM_SETTINGS_H
 
-#include "core/scene.h"
+#include "core/scenes/scene.h"
 #include "core/ui.h"
 
 class SettingsScene : public Scene {

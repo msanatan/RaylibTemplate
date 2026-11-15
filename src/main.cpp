@@ -3,12 +3,12 @@
 #include <string>
 #include <vector>
 
-#include "core/assets.h"
-#include "core/input.h"
+#include "core/assets/assets.h"
+#include "core/input/input.h"
 #include "core/launch_options.h"
 #include "core/log.h"
-#include "core/playtest.h"
-#include "core/scene_manager.h"
+#include "core/scenes/scene_manager.h"
+#include "core/testing/playtest.h"
 #include "game/bindings.h"
 #include "raylib.h"
 #include "scenes/registry.h"

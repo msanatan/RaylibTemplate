@@ -7,7 +7,7 @@
 #include <string>
 #include <vector>
 
-#include "core/scene.h"
+#include "core/scenes/scene.h"
 
 // Only the top scene updates. Changes are applied after that update, and the
 // incoming scene is built after the outgoing one is destroyed, so a scene can

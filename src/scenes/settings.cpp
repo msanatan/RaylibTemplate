@@ -2,8 +2,8 @@
 
 #include <cmath>
 
-#include "core/input.h"
-#include "core/scene_manager.h"
+#include "core/input/input.h"
+#include "core/scenes/scene_manager.h"
 
 namespace {
 const Color backgroundColor = {11, 15, 31, 255};

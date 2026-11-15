@@ -1,7 +1,7 @@
 #ifndef GBM_SPLASH_H
 #define GBM_SPLASH_H
 
-#include "core/scene.h"
+#include "core/scenes/scene.h"
 #include "raylib.h"
 
 class SplashScene : public Scene {

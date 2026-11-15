@@ -4,25 +4,12 @@
 #include <initializer_list>
 #include <string>
 
+#include "core/input/touch_controls.h"
 #include "raylib.h"
 
 // Game code asks about named actions; src/game/bindings.cpp decides which keys,
 // gamepad buttons, gestures and on-screen controls trigger them. Asking about
 // an action nobody bound is a fatal error in Debug.
-
-// Positions are fractions of the screen size and radius is a fraction of the
-// screen height, so on-screen controls keep their place when the window or
-// canvas is resized.
-struct TouchButton {
-  Vector2 anchor;
-  float radius;
-  std::string label;
-};
-
-struct TouchStick {
-  Vector2 anchor;
-  float radius;
-};
 
 void BindKeys(const std::string& action, std::initializer_list<int> keys);
 void BindGamepadButtons(const std::string& action,

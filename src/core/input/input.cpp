@@ -1,4 +1,4 @@
-#include "core/input.h"
+#include "core/input/input.h"
 
 #include <array>
 #include <map>
@@ -8,15 +8,7 @@
 
 namespace {
 const float stickDeadzone = 0.2f;
-const float stickCaptureReach = 1.5f;
 const int maxGamepads = 4;
-const int mousePointer = -1;
-const int noPointer = -2;
-
-struct Pointer {
-  int id;
-  Vector2 position;
-};
 
 struct ButtonAction {
   std::vector<int> keys;
@@ -26,12 +18,6 @@ struct ButtonAction {
   bool down = false;
   bool wasDown = false;
   int lastAskedFrame = -1;
-};
-
-struct BoundTouchStick {
-  TouchStick stick;
-  int pointer = noPointer;
-  Vector2 value = {0.0f, 0.0f};
 };
 
 struct AxisAction {
@@ -44,10 +30,8 @@ struct AxisAction {
 
 std::map<std::string, ButtonAction> buttons;
 std::map<std::string, AxisAction> axes;
-std::vector<Pointer> pointers;
 int frame = 0;
-bool touchSeen = false;
-bool touchForced = false;
+TouchControls touchControls;
 
 template <typename Action>
 Action& Asked(std::map<std::string, Action>& actions, const std::string& name) {
@@ -64,29 +48,9 @@ Action& Asked(std::map<std::string, Action>& actions, const std::string& name) {
   return action->second;
 }
 
-bool TouchControlsShowing() { return touchForced || touchSeen; }
-
 template <typename Action>
 bool IsLive(const Action& action) {
-  return TouchControlsShowing() && action.lastAskedFrame >= frame - 1;
-}
-
-Vector2 Center(Vector2 anchor) {
-  return {anchor.x * (float)GetScreenWidth(),
-          anchor.y * (float)GetScreenHeight()};
-}
-
-float Radius(float radius) { return radius * (float)GetScreenHeight(); }
-
-void UpdatePointers() {
-  pointers.clear();
-  for (int i = 0; i < GetTouchPointCount(); i++) {
-    pointers.push_back({GetTouchPointId(i), GetTouchPosition(i)});
-  }
-  touchSeen = touchSeen || !pointers.empty();
-  if (pointers.empty() && touchForced && IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
-    pointers.push_back({mousePointer, GetMousePosition()});
-  }
+  return touchControls.isShowing() && action.lastAskedFrame >= frame - 1;
 }
 
 bool IsButtonDown(const ButtonAction& action) {
@@ -101,9 +65,7 @@ bool IsButtonDown(const ButtonAction& action) {
     }
   }
   if (physical) {
-    // Picking up a keyboard or controller puts the on-screen controls away
-    // again
-    touchSeen = false;
+    touchControls.notePhysicalInput();
     return true;
   }
 
@@ -114,42 +76,12 @@ bool IsButtonDown(const ButtonAction& action) {
   }
   if (IsLive(action)) {
     for (const TouchButton& button : action.touchButtons) {
-      for (const Pointer& pointer : pointers) {
-        if (CheckCollisionPointCircle(pointer.position, Center(button.anchor),
-                                      Radius(button.radius))) {
-          return true;
-        }
+      if (touchControls.isButtonDown(button)) {
+        return true;
       }
     }
   }
   return false;
-}
-
-void UpdateTouchStick(BoundTouchStick& bound, bool live) {
-  const Vector2 center = Center(bound.stick.anchor);
-  const float radius = Radius(bound.stick.radius);
-  const Pointer* holder = nullptr;
-  for (const Pointer& pointer : pointers) {
-    const bool inReach =
-        Vector2Distance(pointer.position, center) <= radius * stickCaptureReach;
-    // A finger that started on the stick keeps steering it however far it then
-    // drags
-    if (pointer.id == bound.pointer ||
-        (bound.pointer == noPointer && inReach)) {
-      holder = &pointer;
-      break;
-    }
-  }
-
-  if (!live || holder == nullptr) {
-    bound.pointer = noPointer;
-    bound.value = {0.0f, 0.0f};
-    return;
-  }
-  bound.pointer = holder->id;
-  bound.value = Vector2ClampValue(
-      Vector2Scale(Vector2Subtract(holder->position, center), 1.0f / radius),
-      0.0f, 1.0f);
 }
 
 Vector2 ReadAxis(AxisAction& action) {
@@ -171,22 +103,16 @@ Vector2 ReadAxis(AxisAction& action) {
     }
   }
   if (Vector2Length(value) > 0.0f) {
-    touchSeen = false;
+    touchControls.notePhysicalInput();
   }
 
   for (BoundTouchStick& bound : action.touchSticks) {
-    UpdateTouchStick(bound, IsLive(action));
+    touchControls.updateStick(bound, IsLive(action));
     value = Vector2Add(value, bound.value);
   }
   return Vector2ClampValue(value, 0.0f, 1.0f);
 }
 
-void DrawLabel(const std::string& label, Vector2 center, float radius) {
-  const int fontSize = (int)radius;
-  const int width = MeasureText(label.c_str(), fontSize);
-  DrawText(label.c_str(), (int)center.x - width / 2,
-           (int)center.y - fontSize / 2, fontSize, Fade(BLACK, 0.6f));
-}
 }  // namespace
 
 void BindKeys(const std::string& action, std::initializer_list<int> keys) {
@@ -238,7 +164,7 @@ Vector2 ActionAxis(const std::string& axis) { return Asked(axes, axis).value; }
 
 void UpdateInput() {
   frame++;
-  UpdatePointers();
+  touchControls.updatePointers();
   for (auto& [name, action] : buttons) {
     action.wasDown = action.down;
     action.down = IsButtonDown(action);
@@ -248,29 +174,20 @@ void UpdateInput() {
   }
 }
 
-void ForceTouchControls(bool forced) { touchForced = forced; }
+void ForceTouchControls(bool forced) { touchControls.force(forced); }
 
 void DrawTouchControls() {
   for (const auto& [name, action] : buttons) {
     for (const TouchButton& button : action.touchButtons) {
       if (IsLive(action)) {
-        const Vector2 center = Center(button.anchor);
-        DrawCircleV(center, Radius(button.radius),
-                    Fade(GRAY, action.down ? 0.6f : 0.35f));
-        DrawCircleLinesV(center, Radius(button.radius), Fade(BLACK, 0.4f));
-        DrawLabel(button.label, center, Radius(button.radius));
+        touchControls.drawButton(button, action.down);
       }
     }
   }
   for (const auto& [name, action] : axes) {
     for (const BoundTouchStick& bound : action.touchSticks) {
       if (IsLive(action)) {
-        const Vector2 center = Center(bound.stick.anchor);
-        const float radius = Radius(bound.stick.radius);
-        DrawCircleV(center, radius, Fade(GRAY, 0.25f));
-        DrawCircleLinesV(center, radius, Fade(BLACK, 0.4f));
-        DrawCircleV(Vector2Add(center, Vector2Scale(bound.value, radius)),
-                    radius * 0.45f, Fade(GRAY, 0.6f));
+        touchControls.drawStick(bound);
       }
     }
   }

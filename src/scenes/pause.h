@@ -1,7 +1,7 @@
 #ifndef GBM_PAUSE_H
 #define GBM_PAUSE_H
 
-#include "core/scene.h"
+#include "core/scenes/scene.h"
 #include "core/ui.h"
 
 class PauseScene : public Scene {

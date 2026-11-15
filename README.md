@@ -13,12 +13,22 @@ This is a template for a raylib project. It uses CMake and Ninja to build the pr
 ```
 src/
   main.cpp     window, main loop, pushes the first scene
-  core/        the template itself, identical across games: assets, scene stack, menu widget
+  core/        reusable template code
+    input/     action bindings and state; touch pointer capture and drawing
+    assets/    asset loading, development file watching, packed archive backend
+    scenes/    Scene interface and SceneManager stack, sessions, and reloads
+    testing/   playtest script parser and frame-by-frame runner
+    ui.h/.cpp  menu widget and text drawing helper
+    log.h/.cpp             structured logging
+    launch_options.h/.cpp  command-line options
   scenes/      one file pair per screen: splash, main_menu, settings, gameplay, pause
   game/        this game's own code: player, entities, levels
 assets/
   branding/  textures/  models/  fonts/  shaders/  data/
   audio/music/  audio/sfx/
+cmake/
+  Assets.cmake  desktop asset packing and web preloading
+  Format.cmake  pinned code formatter
 ```
 
 Each screen is a `Scene` with `update` and `draw`. Scenes change screens through the `SceneManager` they are given:
@@ -29,15 +39,19 @@ Each screen is a `Scene` with `update` and `draw`. Scenes change screens through
 - `scenes.reset<MainMenuScene>()` clears the whole stack first
 - `scenes.quit()` exits the game
 
-Load assets through `core/assets.h` in a scene's constructor and unload them in its destructor.
+Load assets through `core/assets/assets.h` in a scene's constructor and unload them in its destructor.
 
 In Debug desktop builds, saving any file under `assets/` while the game is running rebuilds the live scenes so they load the new version.
+
+`core/assets/asset_watcher.h/.cpp` handles filesystem polling and debounce. The asset-loading facade keeps the reload callback and load-failure policy.
 
 A scene that implements `saveState()` and `restoreState()` keeps its place through that rebuild, and through a restart when the game is run with `--session`.
 
 ## Input
 
 Scenes ask about named actions, never about keys: `ActionPressed("pause")`, `ActionDown(...)`, `ActionAxis("move")`. `src/game/bindings.cpp` is the one place that says which keys, gamepad buttons, gestures and on-screen controls trigger each action.
+
+The action API lives in `core/input/input.h`. `touch_controls.h/.cpp` owns pointer sampling, stick capture, and drawing; the input system decides which actions' controls are active.
 
 On-screen controls appear once the player touches the screen, and only for actions the current scene is asking about. Run with `--touch` to use them with a mouse on desktop.
 
@@ -50,7 +64,9 @@ ctest --preset test-macos-debug -L playtest   # scripted runs of the real game
 ```
 
 - Unit tests live in `tests/unit/` and use [doctest](https://github.com/doctest/doctest).
-- Playtests are the scripts in `tests/playtests/`. Each one drives the game with scripted input, checks its state and saves screenshots to `build/<preset>/shots/`. The commands are listed in `src/core/playtest.h`.
+- Playtests are the scripts in `tests/playtests/`. Each one drives the game with scripted input, checks its state and saves screenshots to `build/<preset>/shots/`. The commands are listed in `src/core/testing/script.h`.
+
+`core/testing/script.h/.cpp` defines and parses commands. `playtest.h/.cpp` executes them, injects input, and captures screenshots.
 
 The game also takes these options directly:
 

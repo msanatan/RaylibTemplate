@@ -1,4 +1,4 @@
-#include "core/pak.h"
+#include "core/assets/pak.h"
 
 #include <cstring>
 #include <filesystem>

@@ -1,6 +1,6 @@
 #include "scenes/main_menu.h"
 
-#include "core/scene_manager.h"
+#include "core/scenes/scene_manager.h"
 #include "scenes/gameplay.h"
 #include "scenes/settings.h"
 
