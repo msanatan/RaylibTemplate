@@ -21,6 +21,10 @@ struct Game
 static void UpdateAndDrawFrame(void *gamePointer)
 {
   Game &game = *static_cast<Game *>(gamePointer);
+  if (!game.playtest.isActive())
+  {
+    PollAssetChanges([&game] { game.scenes.reload(); });
+  }
   game.playtest.beginFrame(game.scenes);
   game.scenes.update(game.playtest.isActive() ? Playtest::frameTime : GetFrameTime());
 

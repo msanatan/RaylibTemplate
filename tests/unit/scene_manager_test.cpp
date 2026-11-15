@@ -148,6 +148,19 @@ TEST_CASE("reset clears the whole stack from the top down")
   CHECK(Settle(scenes, events) == Events{"update pause", "destroy pause", "destroy game", "create menu"});
 }
 
+TEST_CASE("reload rebuilds every scene in place, bottom first")
+{
+  Events events;
+  SceneManager scenes;
+  scenes.push<RecordingScene>(&events, std::string("game"));
+  scenes.push<RecordingScene>(&events, std::string("pause"), true);
+  Settle(scenes, events);
+
+  scenes.reload();
+  CHECK(events == Events{"destroy game", "create game", "destroy pause", "create pause"});
+  CHECK(scenes.describe() == "scene 0: game \nscene 1: pause \n");
+}
+
 TEST_CASE("quit empties the stack and ends the game")
 {
   Events events;

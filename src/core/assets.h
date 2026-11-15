@@ -1,12 +1,16 @@
 #ifndef GBM_ASSETS_H
 #define GBM_ASSETS_H
 
+#include <functional>
 #include <string>
 
 #include "raylib.h"
 
 void InitAssets();
 void CloseAssets();
+
+// Calls onChange once files under assets/ have changed and settled. Only Debug desktop builds watch.
+void PollAssetChanges(const std::function<void()> &onChange);
 
 std::string AssetPath(const std::string &relativePath);
 

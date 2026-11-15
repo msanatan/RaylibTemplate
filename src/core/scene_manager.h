@@ -34,6 +34,9 @@ public:
   void pop();
   void quit();
 
+  // Rebuilds every live scene so it loads its assets again. Call between frames, never from inside a scene.
+  void reload();
+
   bool isDone() const;
   void update(float deltaTime);
   void draw() const;
@@ -61,9 +64,15 @@ private:
     return [this, args...]() { return std::make_unique<T>(*this, args...); };
   }
 
+  struct Entry
+  {
+    std::unique_ptr<Scene> scene;
+    Factory create;
+  };
+
   void applyPending();
 
-  std::vector<std::unique_ptr<Scene>> stack;
+  std::vector<Entry> stack;
   std::vector<PendingChange> pending;
 };
 

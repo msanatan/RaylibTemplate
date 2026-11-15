@@ -4,6 +4,11 @@
 #include "core/pak.h"
 #endif
 
+#if defined(DEV_ASSETS_DIR)
+#include <chrono>
+#include <filesystem>
+#endif
+
 namespace
 {
 const std::string &AssetsRoot()
@@ -21,18 +26,38 @@ const std::string &AssetsRoot()
   return root;
 }
 
+#if defined(NDEBUG)
+bool loadFailuresAreFatal = false;
+#else
+bool loadFailuresAreFatal = true;
+#endif
+
 void RequireLoaded(bool loaded, const char *kind, const std::string &relativePath)
 {
-#if defined(NDEBUG)
-  const int level = LOG_ERROR;
-#else
-  const int level = LOG_FATAL;
-#endif
   if (!loaded)
   {
-    TraceLog(level, "ASSETS: Failed to load %s [%s]", kind, relativePath.c_str());
+    TraceLog(loadFailuresAreFatal ? LOG_FATAL : LOG_ERROR, "ASSETS: Failed to load %s [%s]", kind, relativePath.c_str());
   }
 }
+
+#if defined(DEV_ASSETS_DIR)
+size_t AssetsSignature()
+{
+  size_t signature = 0;
+  std::error_code error;
+  for (std::filesystem::recursive_directory_iterator file(DEV_ASSETS_DIR, error), end; !error && file != end; file.increment(error))
+  {
+    const std::string fileName = file->path().filename().string();
+    if (!file->is_regular_file(error) || fileName.front() == '.')
+    {
+      continue;
+    }
+    const long long modified = (long long)file->last_write_time(error).time_since_epoch().count();
+    signature ^= std::hash<std::string>()(file->path().string() + std::to_string(modified));
+  }
+  return signature;
+}
+#endif
 } // namespace
 
 void InitAssets()
@@ -46,6 +71,40 @@ void CloseAssets()
 {
 #if defined(ASSETS_PAK_PATH)
   UnmountPak();
+#endif
+}
+
+void PollAssetChanges(const std::function<void()> &onChange)
+{
+#if defined(DEV_ASSETS_DIR)
+  using Clock = std::chrono::steady_clock;
+  static Clock::time_point nextPoll = Clock::now();
+  static size_t applied = AssetsSignature();
+  static size_t lastSeen = applied;
+
+  if (Clock::now() < nextPoll)
+  {
+    return;
+  }
+  nextPoll = Clock::now() + std::chrono::milliseconds(250);
+
+  // Editors save in several writes, so only act once a whole interval has passed with nothing moving
+  const size_t current = AssetsSignature();
+  const bool settled = current == lastSeen;
+  lastSeen = current;
+  if (current == applied || !settled)
+  {
+    return;
+  }
+  applied = current;
+
+  TraceLog(LOG_INFO, "ASSETS: Files changed, reloading");
+  // A half-edited shader or data file should show an error and wait for the next save, not end the session
+  loadFailuresAreFatal = false;
+  onChange();
+  loadFailuresAreFatal = true;
+#else
+  (void)onChange;
 #endif
 }
 

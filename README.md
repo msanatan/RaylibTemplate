@@ -31,6 +31,8 @@ Each screen is a `Scene` with `update` and `draw`. Scenes change screens through
 
 Load assets through `core/assets.h` in a scene's constructor and unload them in its destructor.
 
+In Debug desktop builds, saving any file under `assets/` while the game is running rebuilds the live scenes so they load the new version.
+
 ## Testing
 
 ```sh
