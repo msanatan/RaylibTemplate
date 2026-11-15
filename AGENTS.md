@@ -13,6 +13,12 @@ Keep code easy for humans and agents to read and modify. See [README.md](README.
 - Screens belong in `src/scenes/`, game rules and entities in `src/game/`, and asset files in `assets/`.
 - Prefer focused files and simple control flow. Add abstractions when a concrete need warrants them.
 
+## Documentation
+
+- Code is the source of truth for behavior and implementation details. Read it rather than relying on prose that duplicates it.
+- Keep the README a short guide to getting started, using the template, and finding the relevant code. Do not append implementation summaries, troubleshooting notes, or details of every change.
+- Update the README when setup or usage changes. Link to the relevant source for details instead of restating APIs or workflow internals. Put change summaries and verification results in your response or PR description.
+
 ## Runtime rules
 
 - Load assets through `core/assets/assets.h` in scene constructors and unload them in destructors. Pair `LoadGameMusic` with `UnloadGameMusic` so packed music buffers are released correctly.
