@@ -4,10 +4,12 @@
 #include <vector>
 
 #include "core/assets.h"
+#include "core/input.h"
 #include "core/launch_options.h"
 #include "core/log.h"
 #include "core/playtest.h"
 #include "core/scene_manager.h"
+#include "game/bindings.h"
 #include "raylib.h"
 #include "scenes/registry.h"
 
@@ -27,12 +29,14 @@ static void UpdateAndDrawFrame(void* gamePointer) {
   }
   LogNextFrame();
   game.playtest.beginFrame(game.scenes);
+  UpdateInput();
   game.scenes.update(game.playtest.isActive() ? Playtest::frameTime
                                               : GetFrameTime());
   LogSceneStack(game.scenes.stackNames());
 
   BeginDrawing();
   game.scenes.draw();
+  DrawTouchControls();
   game.playtest.endFrame();
   EndDrawing();
 }
@@ -118,6 +122,8 @@ int main(int argc, char** argv) {
   InitAssets();
   // Esc opens the pause menu, so it can't also be raylib's quit shortcut
   SetExitKey(KEY_NULL);
+  BindGameInput();
+  ForceTouchControls(options.touch);
 
   const bool succeeded = RunGame(options);
 

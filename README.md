@@ -35,6 +35,12 @@ In Debug desktop builds, saving any file under `assets/` while the game is runni
 
 A scene that implements `saveState()` and `restoreState()` keeps its place through that rebuild, and through a restart when the game is run with `--session`.
 
+## Input
+
+Scenes ask about named actions, never about keys: `ActionPressed("pause")`, `ActionDown(...)`, `ActionAxis("move")`. `src/game/bindings.cpp` is the one place that says which keys, gamepad buttons, gestures and on-screen controls trigger each action.
+
+On-screen controls appear once the player touches the screen, and only for actions the current scene is asking about. Run with `--touch` to use them with a mouse on desktop.
+
 ## Testing
 
 ```sh
@@ -54,6 +60,7 @@ RaylibTemplate --scene gameplay,pause      # start on a stack of scenes, bottom 
 RaylibTemplate --script my_playtest.txt    # run a playtest script, exit 1 if an `expect` fails
 RaylibTemplate --session session.txt       # resume from this file if it exists, save to it on exit
 RaylibTemplate --log game.log              # also write the log to this file
+RaylibTemplate --touch                     # show on-screen controls and treat the mouse as a finger
 ```
 
 Every log line is stamped `[seconds frame level scene]`, and each scene change is logged. Game code logs with raylib's `TraceLog`.

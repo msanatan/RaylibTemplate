@@ -10,6 +10,7 @@ struct LaunchOptions {
   std::string script;
   std::string session;
   std::string log;
+  bool touch = false;
 };
 
 bool ParseLaunchOptions(const std::vector<std::string>& arguments,

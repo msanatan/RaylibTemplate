@@ -6,6 +6,7 @@
 #include <map>
 #include <sstream>
 
+#include "core/input.h"
 #include "raylib.h"
 #include "rlgl.h"
 
@@ -76,6 +77,8 @@ bool Playtest::load(const std::string& scriptFile) {
       valid = (bool)(words >> keyName >> command.frames);
     } else if (command.name == "click") {
       valid = (bool)(words >> command.x >> command.y);
+    } else if (command.name == "touch") {
+      valid = (bool)(words >> command.x >> command.y >> command.frames);
     } else if (command.name == "wait") {
       valid = (bool)(words >> command.frames);
     } else if (command.name == "shot" || command.name == "expect") {
@@ -136,10 +139,13 @@ void Playtest::beginFrame(const SceneManager& scenes) {
     if (command.name == "press" || command.name == "hold") {
       Inject(eventKeyDown, command.key);
       held.push_back({eventKeyUp, command.key, command.frames});
-    } else if (command.name == "click") {
+    } else if (command.name == "click" || command.name == "touch") {
+      if (command.name == "touch") {
+        ForceTouchControls(true);
+      }
       Inject(eventMousePosition, command.x, command.y);
       Inject(eventMouseButtonDown, MOUSE_BUTTON_LEFT);
-      held.push_back({eventMouseButtonUp, MOUSE_BUTTON_LEFT, 1});
+      held.push_back({eventMouseButtonUp, MOUSE_BUTTON_LEFT, command.frames});
     } else if (command.name == "shot") {
       pendingShot = command.text;
     } else if (command.name == "quit") {

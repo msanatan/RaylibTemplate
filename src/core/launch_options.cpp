@@ -11,7 +11,17 @@ bool ParseLaunchOptions(const std::vector<std::string>& arguments,
       {"--log", &options.log},
   };
 
+  const std::map<std::string, bool*> flags = {
+      {"--touch", &options.touch},
+  };
+
   for (size_t i = 0; i < arguments.size(); i += 2) {
+    const auto flag = flags.find(arguments[i]);
+    if (flag != flags.end()) {
+      *flag->second = true;
+      i--;
+      continue;
+    }
     const auto value = values.find(arguments[i]);
     if (value == values.end()) {
       error = "Unknown option " + arguments[i];

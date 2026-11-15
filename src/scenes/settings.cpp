@@ -2,6 +2,7 @@
 
 #include <cmath>
 
+#include "core/input.h"
 #include "core/scene_manager.h"
 
 namespace {
@@ -36,7 +37,7 @@ void SettingsScene::update(float) {
   }
 
   menu.update();
-  if (IsKeyPressed(KEY_ESCAPE)) {
+  if (ActionPressed("ui_back")) {
     scenes.pop();
   }
 }

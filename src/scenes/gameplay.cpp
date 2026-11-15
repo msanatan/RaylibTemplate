@@ -2,6 +2,7 @@
 
 #include <sstream>
 
+#include "core/input.h"
 #include "core/scene_manager.h"
 #include "raymath.h"
 #include "scenes/pause.h"
@@ -34,19 +35,14 @@ void GameplayScene::restoreState(const std::string& state) {
 }
 
 void GameplayScene::update(float deltaTime) {
-  if (IsKeyPressed(KEY_ESCAPE) || IsKeyPressed(KEY_P)) {
+  if (ActionPressed("pause")) {
     scenes.push<PauseScene>();
     return;
   }
 
-  Vector3 direction = {0.0f, 0.0f, 0.0f};
-  if (IsKeyDown(KEY_LEFT)) direction.x -= 1.0f;
-  if (IsKeyDown(KEY_RIGHT)) direction.x += 1.0f;
-  if (IsKeyDown(KEY_UP)) direction.z -= 1.0f;
-  if (IsKeyDown(KEY_DOWN)) direction.z += 1.0f;
-
-  player.move(
-      Vector3Scale(Vector3Normalize(direction), playerSpeed * deltaTime));
+  const Vector2 move = ActionAxis("move");
+  player.move({move.x * playerSpeed * deltaTime, 0.0f,
+               move.y * playerSpeed * deltaTime});
 }
 
 void GameplayScene::draw() const {

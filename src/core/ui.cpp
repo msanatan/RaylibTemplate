@@ -1,5 +1,7 @@
 #include "core/ui.h"
 
+#include "core/input.h"
+
 namespace {
 const int itemFontSize = 32;
 const float itemSpacing = 52.0f;
@@ -35,14 +37,14 @@ void Menu::update() {
   }
 
   const int count = (int)items.size();
-  if (IsKeyPressed(KEY_DOWN) || IsKeyPressed(KEY_S)) {
+  if (ActionPressed("ui_down")) {
     selected = (selected + 1) % count;
   }
-  if (IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_W)) {
+  if (ActionPressed("ui_up")) {
     selected = (selected + count - 1) % count;
   }
 
-  bool activated = IsKeyPressed(KEY_ENTER) || IsKeyPressed(KEY_SPACE);
+  bool activated = ActionPressed("ui_accept");
 
   const Vector2 mouse = GetMousePosition();
   const Vector2 mouseDelta = GetMouseDelta();

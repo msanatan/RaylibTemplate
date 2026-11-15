@@ -10,11 +10,12 @@
 //   press KEY          tap a key for one frame
 //   hold KEY FRAMES    keep a key down for that many frames
 //   click X Y          left click at a window position
-//   wait FRAMES        let the game run
-//   shot FILE.png      save a screenshot, relative to the working directory
-//   dump               print the scene stack and each scene's debugState()
-//   expect TEXT        fail the run unless the dump contains TEXT
-//   quit               stop (reaching the end of the script does the same)
+//   touch X Y FRAMES   hold a finger on the screen (turns the on-screen
+//   controls on) wait FRAMES        let the game run shot FILE.png      save a
+//   screenshot, relative to the working directory dump               print the
+//   scene stack and each scene's debugState() expect TEXT        fail the run
+//   unless the dump contains TEXT quit               stop (reaching the end of
+//   the script does the same)
 // KEY is a letter, a digit, or one of SPACE ENTER ESCAPE TAB BACKSPACE UP DOWN
 // LEFT RIGHT SHIFT CONTROL.
 class Playtest {
