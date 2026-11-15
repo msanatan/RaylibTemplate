@@ -23,13 +23,18 @@ jobs:
           echo "name=$PROJECT_NAME" >> $GITHUB_OUTPUT
       - name: Package
         shell: bash
+        env:
+          GAME_NAME: ${{ steps.project-name.outputs.name }}
         run: |
           mkdir -p dist
           if [[ "$RUNNER_OS" == "Windows" ]]; then
-            cp build/windows-release/${{ steps.project-name.outputs.name }}.exe dist/
+            cp "build/windows-release/${GAME_NAME}.exe" dist/
             cp build/windows-release/assets.pak dist/
           else
-            cp -r build/macos-release/${{ steps.project-name.outputs.name }}.app dist/
+            APP_BUNDLE="build/macos-release/${GAME_NAME}.app"
+            codesign --force --sign - "$APP_BUNDLE"
+            codesign --verify --deep --strict --verbose=2 "$APP_BUNDLE"
+            ditto -c -k --keepParent "$APP_BUNDLE" "dist/${GAME_NAME}-macos.zip"
           fi
       - uses: actions/upload-artifact@v4
         with:
