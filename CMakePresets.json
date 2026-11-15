@@ -79,5 +79,35 @@
             "name": "build-web",
             "configurePreset": "web-release"
         }
+    ],
+    "testPresets": [
+        {
+            "name": "test-macos-debug",
+            "configurePreset": "macos-debug",
+            "output": {
+                "outputOnFailure": true
+            }
+        },
+        {
+            "name": "test-macos-release",
+            "configurePreset": "macos-release",
+            "output": {
+                "outputOnFailure": true
+            }
+        },
+        {
+            "name": "test-windows-debug",
+            "configurePreset": "windows-debug",
+            "output": {
+                "outputOnFailure": true
+            }
+        },
+        {
+            "name": "test-windows-release",
+            "configurePreset": "windows-release",
+            "output": {
+                "outputOnFailure": true
+            }
+        }
     ]
 }

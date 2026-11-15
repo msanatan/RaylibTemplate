@@ -1,6 +1,8 @@
 #ifndef GBM_GAMEPLAY_H
 #define GBM_GAMEPLAY_H
 
+#include <string>
+
 #include "core/scene.h"
 #include "game/player.h"
 #include "raylib.h"
@@ -10,6 +12,8 @@ class GameplayScene : public Scene
 public:
   explicit GameplayScene(SceneManager &scenes);
 
+  const char *name() const override { return "gameplay"; }
+  std::string debugState() const override;
   void update(float deltaTime) override;
   void draw() const override;
 

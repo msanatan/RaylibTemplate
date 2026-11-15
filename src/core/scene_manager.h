@@ -3,6 +3,7 @@
 
 #include <functional>
 #include <memory>
+#include <string>
 #include <vector>
 
 #include "core/scene.h"
@@ -36,6 +37,7 @@ public:
   bool isDone() const;
   void update(float deltaTime);
   void draw() const;
+  std::string describe() const;
 
 private:
   enum class Change

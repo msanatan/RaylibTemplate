@@ -36,6 +36,16 @@ void SceneManager::draw() const
   }
 }
 
+std::string SceneManager::describe() const
+{
+  std::string description;
+  for (size_t i = 0; i < stack.size(); i++)
+  {
+    description += "scene " + std::to_string(i) + ": " + stack[i]->name() + " " + stack[i]->debugState() + "\n";
+  }
+  return description;
+}
+
 void SceneManager::applyPending()
 {
   std::vector<PendingChange> changes;

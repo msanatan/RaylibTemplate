@@ -27,6 +27,11 @@ void Menu::setLabel(int item, const std::string &label)
   items[item].label = label;
 }
 
+std::string Menu::selectedLabel() const
+{
+  return items.empty() ? "" : items[selected].label;
+}
+
 void Menu::update()
 {
   if (items.empty())

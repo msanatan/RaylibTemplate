@@ -1,0 +1,31 @@
+# Walks every screen: splash, main menu, settings, gameplay, pause, then quits from the main menu
+
+wait 30
+shot shots/splash.png
+press SPACE
+expect scene 0: main_menu selected=Play
+shot shots/main_menu.png
+
+press DOWN
+press ENTER
+expect scene 1: settings
+press ESCAPE
+
+press UP
+press ENTER
+expect scene 0: gameplay player=(0.00, 0.00, 0.00)
+hold RIGHT 60
+expect player=(5.00, 0.00, 0.00)
+shot shots/gameplay.png
+
+press ESCAPE
+expect scene 1: pause selected=Resume
+shot shots/pause.png
+press DOWN
+press DOWN
+press ENTER
+expect scene 0: main_menu
+
+# Clicks Quit. The line after it is only reached if the game is still running.
+click 512 500
+expect the game to have quit

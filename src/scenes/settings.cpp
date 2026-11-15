@@ -24,6 +24,11 @@ SettingsScene::SettingsScene(SceneManager &scenes) : Scene(scenes)
   menu.add("Back", [this] { this->scenes.pop(); });
 }
 
+std::string SettingsScene::debugState() const
+{
+  return "selected=" + menu.selectedLabel();
+}
+
 void SettingsScene::update(float)
 {
   menu.setLabel(volumeItem, TextFormat("Volume: %d%%", (int)std::round(GetMasterVolume() * 100.0f)));

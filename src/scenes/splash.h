@@ -10,6 +10,7 @@ public:
   explicit SplashScene(SceneManager &scenes);
   ~SplashScene() override;
 
+  const char *name() const override { return "splash"; }
   void update(float deltaTime) override;
   void draw() const override;
 

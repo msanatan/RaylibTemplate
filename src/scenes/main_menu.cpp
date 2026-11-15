@@ -18,6 +18,11 @@ MainMenuScene::MainMenuScene(SceneManager &scenes) : Scene(scenes)
 #endif
 }
 
+std::string MainMenuScene::debugState() const
+{
+  return "selected=" + menu.selectedLabel();
+}
+
 void MainMenuScene::update(float)
 {
   menu.update();

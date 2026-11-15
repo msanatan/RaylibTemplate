@@ -11,6 +11,11 @@ PauseScene::PauseScene(SceneManager &scenes) : Scene(scenes)
   menu.add("Main Menu", [this] { this->scenes.reset<MainMenuScene>(); });
 }
 
+std::string PauseScene::debugState() const
+{
+  return "selected=" + menu.selectedLabel();
+}
+
 void PauseScene::update(float)
 {
   menu.update();

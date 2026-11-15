@@ -15,6 +15,7 @@ class Menu
 public:
   int add(const std::string &label, std::function<void()> onActivate);
   void setLabel(int item, const std::string &label);
+  std::string selectedLabel() const;
 
   void update();
   void draw() const;

@@ -18,6 +18,11 @@ GameplayScene::GameplayScene(SceneManager &scenes) : Scene(scenes)
   camera.projection = CAMERA_PERSPECTIVE;
 }
 
+std::string GameplayScene::debugState() const
+{
+  return TextFormat("player=(%.2f, %.2f, %.2f)", player.position.x, player.position.y, player.position.z);
+}
+
 void GameplayScene::update(float deltaTime)
 {
   if (IsKeyPressed(KEY_ESCAPE) || IsKeyPressed(KEY_P))

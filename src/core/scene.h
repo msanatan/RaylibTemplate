@@ -1,6 +1,8 @@
 #ifndef GBM_SCENE_H
 #define GBM_SCENE_H
 
+#include <string>
+
 class SceneManager;
 
 class Scene
@@ -11,11 +13,15 @@ public:
   Scene(const Scene &) = delete;
   Scene &operator=(const Scene &) = delete;
 
+  virtual const char *name() const = 0;
   virtual void update(float deltaTime) = 0;
   virtual void draw() const = 0;
 
   // Overlays such as a pause menu keep the scene beneath them on screen
   virtual bool isOverlay() const { return false; }
+
+  // Whatever a playtest script needs to check, printed by its `dump` and matched by its `expect`
+  virtual std::string debugState() const { return ""; }
 
 protected:
   SceneManager &scenes;

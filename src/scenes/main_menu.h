@@ -9,6 +9,8 @@ class MainMenuScene : public Scene
 public:
   explicit MainMenuScene(SceneManager &scenes);
 
+  const char *name() const override { return "main_menu"; }
+  std::string debugState() const override;
   void update(float deltaTime) override;
   void draw() const override;
 

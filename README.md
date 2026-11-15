@@ -31,6 +31,24 @@ Each screen is a `Scene` with `update` and `draw`. Scenes change screens through
 
 Load assets through `core/assets.h` in a scene's constructor and unload them in its destructor.
 
+## Testing
+
+```sh
+ctest --preset test-macos-debug               # everything
+ctest --preset test-macos-debug -L unit       # unit tests only, no window needed
+ctest --preset test-macos-debug -L playtest   # scripted runs of the real game
+```
+
+- Unit tests live in `tests/unit/` and use [doctest](https://github.com/doctest/doctest).
+- Playtests are the scripts in `tests/playtests/`. Each one drives the game with scripted input, checks its state and saves screenshots to `build/<preset>/shots/`. The commands are listed in `src/core/playtest.h`.
+
+The game also takes these options directly:
+
+```sh
+RaylibTemplate --scene gameplay            # start on a scene from src/scenes/registry.cpp
+RaylibTemplate --script my_playtest.txt    # run a playtest script, exit 1 if an `expect` fails
+```
+
 ## Requirements
 
 This template requires:

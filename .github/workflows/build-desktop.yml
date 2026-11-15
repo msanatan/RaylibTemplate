@@ -13,6 +13,8 @@ jobs:
         run: cmake --preset ${{ runner.os == 'macOS' && 'macos-release' || 'windows-release' }}
       - name: Build
         run: cmake --build --preset ${{ runner.os == 'macOS' && 'build-macos' || 'build-windows' }} --parallel
+      - name: Unit tests
+        run: ctest --preset ${{ runner.os == 'macOS' && 'test-macos-release' || 'test-windows-release' }} -L unit
       - name: Get Project Name
         id: project-name
         shell: bash

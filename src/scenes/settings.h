@@ -9,6 +9,8 @@ class SettingsScene : public Scene
 public:
   explicit SettingsScene(SceneManager &scenes);
 
+  const char *name() const override { return "settings"; }
+  std::string debugState() const override;
   void update(float deltaTime) override;
   void draw() const override;
 

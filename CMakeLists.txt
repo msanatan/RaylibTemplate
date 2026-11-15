@@ -53,13 +53,18 @@ if(NOT EMSCRIPTEN AND NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
 endif()
 
 # -------- Your game --------
+# Everything except main.cpp is a library, so the unit tests link the same code the game runs
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS src/*.cpp)
+list(FILTER SOURCES EXCLUDE REGEX "/src/main\\.cpp$")
 if(NOT PACK_ASSETS)
   list(FILTER SOURCES EXCLUDE REGEX "/pak\\.cpp$")
 endif()
-add_executable(${PROJECT_NAME} ${SOURCES})
-target_include_directories(${PROJECT_NAME} PRIVATE src)
-target_link_libraries(${PROJECT_NAME} PRIVATE raylib)
+add_library(game STATIC ${SOURCES})
+target_include_directories(game PUBLIC src)
+target_link_libraries(game PUBLIC raylib)
+
+add_executable(${PROJECT_NAME} src/main.cpp)
+target_link_libraries(${PROJECT_NAME} PRIVATE game)
 
 # -------- Assets --------
 set(ASSETS_SOURCE_DIR ${CMAKE_SOURCE_DIR}/assets)
@@ -100,8 +105,8 @@ elseif(PACK_ASSETS)
     set(ASSETS_PAK_DIR $<TARGET_FILE_DIR:${PROJECT_NAME}>)
     set(ASSETS_PAK_PATH assets.pak)
   endif()
-  target_link_libraries(${PROJECT_NAME} PRIVATE miniz)
-  target_compile_definitions(${PROJECT_NAME} PRIVATE "ASSETS_PAK_PATH=\"${ASSETS_PAK_PATH}\"")
+  target_link_libraries(game PRIVATE miniz)
+  target_compile_definitions(game PUBLIC "ASSETS_PAK_PATH=\"${ASSETS_PAK_PATH}\"")
 
   set(ASSETS_STAMP ${CMAKE_CURRENT_BINARY_DIR}/assets.stamp)
   add_custom_command(
@@ -115,15 +120,15 @@ elseif(PACK_ASSETS)
   )
   add_custom_target(pack_assets ALL DEPENDS ${ASSETS_STAMP})
 else()
-  target_compile_definitions(${PROJECT_NAME} PRIVATE "DEV_ASSETS_DIR=\"${ASSETS_SOURCE_DIR}/\"")
+  target_compile_definitions(game PUBLIC "DEV_ASSETS_DIR=\"${ASSETS_SOURCE_DIR}/\"")
 endif()
 
 # Warnings
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang|AppleClang|GNU")
-  target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wno-missing-field-initializers)
+  target_compile_options(game PUBLIC -Wall -Wextra -Wno-missing-field-initializers)
 endif()
 
-target_compile_definitions(${PROJECT_NAME} PRIVATE GAME_TITLE=\"${PROJECT_NAME}\")
+target_compile_definitions(game PUBLIC GAME_TITLE=\"${PROJECT_NAME}\")
 
 # On macOS: create app bundle for distribution
 if(APPLE)
@@ -134,4 +139,10 @@ if(APPLE)
     MACOSX_BUNDLE_BUNDLE_VERSION "${PROJECT_VERSION}"
     MACOSX_BUNDLE_SHORT_VERSION_STRING "${PROJECT_VERSION}"
   )
+endif()
+
+# -------- Tests --------
+if(NOT EMSCRIPTEN)
+  enable_testing()
+  add_subdirectory(tests)
 endif()
