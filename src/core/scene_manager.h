@@ -9,26 +9,23 @@
 
 #include "core/scene.h"
 
-// Only the top scene updates. Changes are applied after that update, and the incoming scene is built
-// after the outgoing one is destroyed, so a scene can replace itself and two levels never share memory.
-class SceneManager
-{
-public:
+// Only the top scene updates. Changes are applied after that update, and the
+// incoming scene is built after the outgoing one is destroyed, so a scene can
+// replace itself and two levels never share memory.
+class SceneManager {
+ public:
   template <typename T, typename... Args>
-  void push(Args... args)
-  {
+  void push(Args... args) {
     pending.push_back({Change::Push, factory<T>(args...), ""});
   }
 
   template <typename T, typename... Args>
-  void replace(Args... args)
-  {
+  void replace(Args... args) {
     pending.push_back({Change::Pop, factory<T>(args...), ""});
   }
 
   template <typename T, typename... Args>
-  void reset(Args... args)
-  {
+  void reset(Args... args) {
     pending.push_back({Change::Clear, factory<T>(args...), ""});
   }
 
@@ -36,16 +33,16 @@ public:
   void quit();
 
   template <typename T>
-  void registerScene(const std::string &name)
-  {
+  void registerScene(const std::string& name) {
     registered[name] = factory<T>();
   }
 
-  bool pushNamed(const std::string &name, const std::string &state = "");
+  bool pushNamed(const std::string& name, const std::string& state = "");
 
-  // One line per scene, bottom first: its name, then whatever its saveState() returned
+  // One line per scene, bottom first: its name, then whatever its saveState()
+  // returned
   std::string saveSession() const;
-  bool restoreSession(const std::string &session);
+  bool restoreSession(const std::string& session);
 
   // Call between frames, never from inside a scene
   void reload();
@@ -56,33 +53,24 @@ public:
   std::string describe() const;
   std::string stackNames() const;
 
-private:
-  enum class Change
-  {
-    Push,
-    Pop,
-    Clear,
-    Quit
-  };
+ private:
+  enum class Change { Push, Pop, Clear, Quit };
 
   using Factory = std::function<std::unique_ptr<Scene>()>;
 
-  struct PendingChange
-  {
+  struct PendingChange {
     Change change;
     Factory create;
     std::string state;
   };
 
-  struct Entry
-  {
+  struct Entry {
     std::unique_ptr<Scene> scene;
     Factory create;
   };
 
   template <typename T, typename... Args>
-  Factory factory(Args... args)
-  {
+  Factory factory(Args... args) {
     return [this, args...]() { return std::make_unique<T>(*this, args...); };
   }
 
@@ -94,4 +82,4 @@ private:
   bool quitting = false;
 };
 
-#endif // !GBM_SCENE_MANAGER_H
+#endif  // !GBM_SCENE_MANAGER_H

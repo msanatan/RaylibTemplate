@@ -1,87 +1,89 @@
+#include "core/scene_manager.h"
+
 #include <doctest/doctest.h>
 
 #include <string>
 #include <vector>
 
-#include "core/scene_manager.h"
-
-namespace
-{
+namespace {
 using Events = std::vector<std::string>;
 
-class RecordingScene : public Scene
-{
-public:
-  RecordingScene(SceneManager &scenes, Events *events, std::string label, bool overlay = false)
-      : Scene(scenes), events(events), label(std::move(label)), overlay(overlay)
-  {
+class RecordingScene : public Scene {
+ public:
+  RecordingScene(SceneManager& scenes, Events* events, std::string label,
+                 bool overlay = false)
+      : Scene(scenes),
+        events(events),
+        label(std::move(label)),
+        overlay(overlay) {
     events->push_back("create " + this->label);
   }
 
   ~RecordingScene() override { events->push_back("destroy " + label); }
 
-  const char *name() const override { return label.c_str(); }
+  const char* name() const override { return label.c_str(); }
   void update(float) override { events->push_back("update " + label); }
   void draw() const override { events->push_back("draw " + label); }
   bool isOverlay() const override { return overlay; }
 
-private:
-  Events *events;
+ private:
+  Events* events;
   std::string label;
   bool overlay;
 };
 
-class SelfReplacingScene : public Scene
-{
-public:
-  SelfReplacingScene(SceneManager &scenes, Events *events) : Scene(scenes), events(events) {}
+class SelfReplacingScene : public Scene {
+ public:
+  SelfReplacingScene(SceneManager& scenes, Events* events)
+      : Scene(scenes), events(events) {}
 
-  const char *name() const override { return "self_replacing"; }
-  void update(float) override { scenes.replace<RecordingScene>(events, std::string("next")); }
+  const char* name() const override { return "self_replacing"; }
+  void update(float) override {
+    scenes.replace<RecordingScene>(events, std::string("next"));
+  }
   void draw() const override {}
 
-private:
-  Events *events;
+ private:
+  Events* events;
 };
 
-class StatefulScene : public Scene
-{
-public:
-  explicit StatefulScene(SceneManager &scenes) : Scene(scenes) {}
+class StatefulScene : public Scene {
+ public:
+  explicit StatefulScene(SceneManager& scenes) : Scene(scenes) {}
 
-  const char *name() const override { return "stateful"; }
-  void update(float) override { progress += "!"; }
+  const char* name() const override { return "stateful"; }
+  void update(float) override { progress += '!'; }
   void draw() const override {}
   std::string debugState() const override { return progress; }
   std::string saveState() const override { return progress; }
-  void restoreState(const std::string &state) override { progress = state; }
+  void restoreState(const std::string& state) override { progress = state; }
 
-private:
+ private:
   std::string progress = "start";
 };
 
-class PlainScene : public Scene
-{
-public:
-  explicit PlainScene(SceneManager &scenes) : Scene(scenes) {}
+class PlainScene : public Scene {
+ public:
+  explicit PlainScene(SceneManager& scenes) : Scene(scenes) {}
 
-  const char *name() const override { return "plain"; }
+  const char* name() const override { return "plain"; }
   void update(float) override {}
   void draw() const override {}
 };
 
-// Each update applies the changes queued before it, so this settles a freshly queued change
-Events Settle(SceneManager &scenes, Events &events)
-{
+// Each update applies the changes queued before it, so this settles a freshly
+// queued change
+Events Settle(SceneManager& scenes, Events& events) {
   scenes.update(0.0f);
   Events settled;
   settled.swap(events);
   return settled;
 }
-} // namespace
+}  // namespace
 
-TEST_CASE("a pushed scene is created by the next update and updates from the one after")
-{
+TEST_CASE(
+    "a pushed scene is created by the next update and updates from the one "
+    "after") {
   Events events;
   SceneManager scenes;
   scenes.push<RecordingScene>(&events, std::string("menu"));
@@ -92,8 +94,7 @@ TEST_CASE("a pushed scene is created by the next update and updates from the one
   CHECK(Settle(scenes, events) == Events{"update menu"});
 }
 
-TEST_CASE("only the top scene updates")
-{
+TEST_CASE("only the top scene updates") {
   Events events;
   SceneManager scenes;
   scenes.push<RecordingScene>(&events, std::string("game"));
@@ -103,8 +104,7 @@ TEST_CASE("only the top scene updates")
   CHECK(Settle(scenes, events) == Events{"update pause"});
 }
 
-TEST_CASE("an overlay keeps the scene beneath it on screen")
-{
+TEST_CASE("an overlay keeps the scene beneath it on screen") {
   Events events;
   SceneManager scenes;
   scenes.push<RecordingScene>(&events, std::string("game"));
@@ -116,8 +116,7 @@ TEST_CASE("an overlay keeps the scene beneath it on screen")
   CHECK(scenes.stackNames() == "game > pause");
 }
 
-TEST_CASE("a non-overlay hides the scene beneath it")
-{
+TEST_CASE("a non-overlay hides the scene beneath it") {
   Events events;
   SceneManager scenes;
   scenes.push<RecordingScene>(&events, std::string("game"));
@@ -128,8 +127,7 @@ TEST_CASE("a non-overlay hides the scene beneath it")
   CHECK(events == Events{"draw settings"});
 }
 
-TEST_CASE("pop returns control to the scene beneath")
-{
+TEST_CASE("pop returns control to the scene beneath") {
   Events events;
   SceneManager scenes;
   scenes.push<RecordingScene>(&events, std::string("game"));
@@ -141,19 +139,18 @@ TEST_CASE("pop returns control to the scene beneath")
   CHECK(Settle(scenes, events) == Events{"update game"});
 }
 
-TEST_CASE("replace destroys the old scene before creating the new one")
-{
+TEST_CASE("replace destroys the old scene before creating the new one") {
   Events events;
   SceneManager scenes;
   scenes.push<RecordingScene>(&events, std::string("level1"));
   Settle(scenes, events);
 
   scenes.replace<RecordingScene>(&events, std::string("level2"));
-  CHECK(Settle(scenes, events) == Events{"update level1", "destroy level1", "create level2"});
+  CHECK(Settle(scenes, events) ==
+        Events{"update level1", "destroy level1", "create level2"});
 }
 
-TEST_CASE("a scene can replace itself from its own update")
-{
+TEST_CASE("a scene can replace itself from its own update") {
   Events events;
   SceneManager scenes;
   scenes.push<SelfReplacingScene>(&events);
@@ -163,8 +160,7 @@ TEST_CASE("a scene can replace itself from its own update")
   CHECK(scenes.describe() == "scene 0: next \n");
 }
 
-TEST_CASE("reset clears the whole stack from the top down")
-{
+TEST_CASE("reset clears the whole stack from the top down") {
   Events events;
   SceneManager scenes;
   scenes.push<RecordingScene>(&events, std::string("game"));
@@ -172,11 +168,11 @@ TEST_CASE("reset clears the whole stack from the top down")
   Settle(scenes, events);
 
   scenes.reset<RecordingScene>(&events, std::string("menu"));
-  CHECK(Settle(scenes, events) == Events{"update pause", "destroy pause", "destroy game", "create menu"});
+  CHECK(Settle(scenes, events) ==
+        Events{"update pause", "destroy pause", "destroy game", "create menu"});
 }
 
-TEST_CASE("reload rebuilds every scene in place, bottom first")
-{
+TEST_CASE("reload rebuilds every scene in place, bottom first") {
   Events events;
   SceneManager scenes;
   scenes.push<RecordingScene>(&events, std::string("game"));
@@ -184,12 +180,12 @@ TEST_CASE("reload rebuilds every scene in place, bottom first")
   Settle(scenes, events);
 
   scenes.reload();
-  CHECK(events == Events{"destroy game", "create game", "destroy pause", "create pause"});
+  CHECK(events ==
+        Events{"destroy game", "create game", "destroy pause", "create pause"});
   CHECK(scenes.describe() == "scene 0: game \nscene 1: pause \n");
 }
 
-TEST_CASE("reload hands each scene back the state it saved")
-{
+TEST_CASE("reload hands each scene back the state it saved") {
   SceneManager scenes;
   scenes.push<StatefulScene>();
   scenes.update(0.0f);
@@ -200,8 +196,9 @@ TEST_CASE("reload hands each scene back the state it saved")
   CHECK(scenes.describe() == "scene 0: stateful start!\n");
 }
 
-TEST_CASE("quit ends the game after the current update and keeps the stack for saving")
-{
+TEST_CASE(
+    "quit ends the game after the current update and keeps the stack for "
+    "saving") {
   Events events;
   SceneManager scenes;
   scenes.push<RecordingScene>(&events, std::string("menu"));
@@ -214,8 +211,7 @@ TEST_CASE("quit ends the game after the current update and keeps the stack for s
   CHECK(scenes.saveSession() == "menu \n");
 }
 
-TEST_CASE("only registered names can be pushed")
-{
+TEST_CASE("only registered names can be pushed") {
   SceneManager scenes;
   scenes.registerScene<PlainScene>("plain");
 
@@ -225,8 +221,7 @@ TEST_CASE("only registered names can be pushed")
   CHECK(scenes.describe() == "scene 0: plain \n");
 }
 
-TEST_CASE("a saved session restores the same stack with each scene's state")
-{
+TEST_CASE("a saved session restores the same stack with each scene's state") {
   SceneManager played;
   played.push<StatefulScene>();
   played.push<PlainScene>();
@@ -242,8 +237,8 @@ TEST_CASE("a saved session restores the same stack with each scene's state")
   CHECK(resumed.saveSession() == session);
 }
 
-TEST_CASE("a session naming an unregistered scene is refused and pushes nothing")
-{
+TEST_CASE(
+    "a session naming an unregistered scene is refused and pushes nothing") {
   SceneManager scenes;
   scenes.registerScene<PlainScene>("plain");
 

@@ -15,6 +15,7 @@ if(APPLE AND NOT CMAKE_OSX_ARCHITECTURES)
 endif()
 
 set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Web (HTML5) build settings (per raylib wiki)
@@ -138,6 +139,27 @@ if(APPLE)
     MACOSX_BUNDLE_BUNDLE_NAME ${PROJECT_NAME}
     MACOSX_BUNDLE_BUNDLE_VERSION "${PROJECT_VERSION}"
     MACOSX_BUNDLE_SHORT_VERSION_STRING "${PROJECT_VERSION}"
+  )
+endif()
+
+# -------- Formatting --------
+add_custom_target(format COMMAND ${CMAKE_COMMAND} -P ${CMAKE_SOURCE_DIR}/cmake/Format.cmake)
+add_custom_target(format-check COMMAND ${CMAKE_COMMAND} -DCHECK=ON -P ${CMAKE_SOURCE_DIR}/cmake/Format.cmake)
+
+# -------- Linting --------
+# Pinned and fetched through uv, like the formatter, so every machine reports the same findings
+set(CLANG_TIDY_VERSION 23.1.4)
+if(NOT EMSCRIPTEN)
+  if(APPLE)
+    # The packaged clang-tidy doesn't know where Xcode keeps the system headers
+    execute_process(COMMAND xcrun --show-sdk-path OUTPUT_VARIABLE MACOS_SDK OUTPUT_STRIP_TRAILING_WHITESPACE)
+    set(LINT_EXTRA_ARGS --extra-arg=-isysroot${MACOS_SDK})
+  endif()
+  file(GLOB_RECURSE LINT_TEST_SOURCES CONFIGURE_DEPENDS tests/*.cpp)
+  add_custom_target(lint
+    COMMAND uvx --from clang-tidy==${CLANG_TIDY_VERSION} clang-tidy -p ${CMAKE_BINARY_DIR} --quiet ${LINT_EXTRA_ARGS}
+            ${SOURCES} ${CMAKE_SOURCE_DIR}/src/main.cpp ${LINT_TEST_SOURCES}
+    USES_TERMINAL
   )
 endif()
 

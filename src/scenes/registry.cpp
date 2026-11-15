@@ -6,8 +6,7 @@
 #include "scenes/settings.h"
 #include "scenes/splash.h"
 
-void RegisterScenes(SceneManager &scenes)
-{
+void RegisterScenes(SceneManager& scenes) {
   scenes.registerScene<SplashScene>("splash");
   scenes.registerScene<MainMenuScene>("main_menu");
   scenes.registerScene<SettingsScene>("settings");

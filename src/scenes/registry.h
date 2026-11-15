@@ -3,6 +3,6 @@
 
 #include "core/scene_manager.h"
 
-void RegisterScenes(SceneManager &scenes);
+void RegisterScenes(SceneManager& scenes);
 
-#endif // !GBM_REGISTRY_H
+#endif  // !GBM_REGISTRY_H

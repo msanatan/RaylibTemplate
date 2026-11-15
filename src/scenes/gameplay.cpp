@@ -1,18 +1,16 @@
 #include "scenes/gameplay.h"
 
-#include <cstdio>
+#include <sstream>
 
 #include "core/scene_manager.h"
 #include "raymath.h"
 #include "scenes/pause.h"
 
-namespace
-{
+namespace {
 const float playerSpeed = 5.0f;
 }
 
-GameplayScene::GameplayScene(SceneManager &scenes) : Scene(scenes)
-{
+GameplayScene::GameplayScene(SceneManager& scenes) : Scene(scenes) {
   camera.position = {0.0f, 10.0f, 10.0f};
   camera.target = {0.0f, 0.0f, 0.0f};
   camera.up = {0.0f, 1.0f, 0.0f};
@@ -20,44 +18,38 @@ GameplayScene::GameplayScene(SceneManager &scenes) : Scene(scenes)
   camera.projection = CAMERA_PERSPECTIVE;
 }
 
-std::string GameplayScene::debugState() const
-{
-  return TextFormat("player=(%.2f, %.2f, %.2f)", player.position.x, player.position.y, player.position.z);
+std::string GameplayScene::debugState() const {
+  return TextFormat("player=(%.2f, %.2f, %.2f)", player.position.x,
+                    player.position.y, player.position.z);
 }
 
-std::string GameplayScene::saveState() const
-{
-  return TextFormat("%f %f %f", player.position.x, player.position.y, player.position.z);
+std::string GameplayScene::saveState() const {
+  return TextFormat("%f %f %f", player.position.x, player.position.y,
+                    player.position.z);
 }
 
-void GameplayScene::restoreState(const std::string &state)
-{
-  std::sscanf(state.c_str(), "%f %f %f", &player.position.x, &player.position.y, &player.position.z);
+void GameplayScene::restoreState(const std::string& state) {
+  std::istringstream(state) >> player.position.x >> player.position.y >>
+      player.position.z;
 }
 
-void GameplayScene::update(float deltaTime)
-{
-  if (IsKeyPressed(KEY_ESCAPE) || IsKeyPressed(KEY_P))
-  {
+void GameplayScene::update(float deltaTime) {
+  if (IsKeyPressed(KEY_ESCAPE) || IsKeyPressed(KEY_P)) {
     scenes.push<PauseScene>();
     return;
   }
 
   Vector3 direction = {0.0f, 0.0f, 0.0f};
-  if (IsKeyDown(KEY_LEFT))
-    direction.x -= 1.0f;
-  if (IsKeyDown(KEY_RIGHT))
-    direction.x += 1.0f;
-  if (IsKeyDown(KEY_UP))
-    direction.z -= 1.0f;
-  if (IsKeyDown(KEY_DOWN))
-    direction.z += 1.0f;
+  if (IsKeyDown(KEY_LEFT)) direction.x -= 1.0f;
+  if (IsKeyDown(KEY_RIGHT)) direction.x += 1.0f;
+  if (IsKeyDown(KEY_UP)) direction.z -= 1.0f;
+  if (IsKeyDown(KEY_DOWN)) direction.z += 1.0f;
 
-  player.move(Vector3Scale(Vector3Normalize(direction), playerSpeed * deltaTime));
+  player.move(
+      Vector3Scale(Vector3Normalize(direction), playerSpeed * deltaTime));
 }
 
-void GameplayScene::draw() const
-{
+void GameplayScene::draw() const {
   ClearBackground(RAYWHITE);
   BeginMode3D(camera);
   player.draw();

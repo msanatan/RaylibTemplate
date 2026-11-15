@@ -9,17 +9,18 @@
 void InitAssets();
 void CloseAssets();
 
-// Only Debug desktop builds watch for changes; everywhere else this does nothing
-void PollAssetChanges(const std::function<void()> &onChange);
+// Only Debug desktop builds watch for changes; everywhere else this does
+// nothing
+void PollAssetChanges(const std::function<void()>& onChange);
 
-std::string AssetPath(const std::string &relativePath);
+std::string AssetPath(const std::string& relativePath);
 
-Texture2D LoadGameTexture(const std::string &relativePath);
-Model LoadGameModel(const std::string &relativePath);
-Font LoadGameFont(const std::string &relativePath);
-Sound LoadGameSound(const std::string &relativePath);
+Texture2D LoadGameTexture(const std::string& relativePath);
+Model LoadGameModel(const std::string& relativePath);
+Font LoadGameFont(const std::string& relativePath);
+Sound LoadGameSound(const std::string& relativePath);
 
-Music LoadGameMusic(const std::string &relativePath);
+Music LoadGameMusic(const std::string& relativePath);
 void UnloadGameMusic(Music music);
 
-#endif // !GBM_ASSETS_H
+#endif  // !GBM_ASSETS_H

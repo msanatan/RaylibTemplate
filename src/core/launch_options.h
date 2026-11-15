@@ -4,8 +4,7 @@
 #include <string>
 #include <vector>
 
-struct LaunchOptions
-{
+struct LaunchOptions {
   // Comma-separated when starting on a stack, bottom first: "gameplay,pause"
   std::string scene = "splash";
   std::string script;
@@ -13,6 +12,7 @@ struct LaunchOptions
   std::string log;
 };
 
-bool ParseLaunchOptions(const std::vector<std::string> &arguments, LaunchOptions &options, std::string &error);
+bool ParseLaunchOptions(const std::vector<std::string>& arguments,
+                        LaunchOptions& options, std::string& error);
 
-#endif // !GBM_LAUNCH_OPTIONS_H
+#endif  // !GBM_LAUNCH_OPTIONS_H

@@ -4,20 +4,19 @@
 #include "core/scene.h"
 #include "core/ui.h"
 
-class SettingsScene : public Scene
-{
-public:
-  explicit SettingsScene(SceneManager &scenes);
+class SettingsScene : public Scene {
+ public:
+  explicit SettingsScene(SceneManager& scenes);
 
-  const char *name() const override { return "settings"; }
+  const char* name() const override { return "settings"; }
   std::string debugState() const override;
   void update(float deltaTime) override;
   void draw() const override;
 
-private:
+ private:
   Menu menu;
   int volumeItem = 0;
   int fullscreenItem = -1;
 };
 
-#endif // !GBM_SETTINGS_H
+#endif  // !GBM_SETTINGS_H

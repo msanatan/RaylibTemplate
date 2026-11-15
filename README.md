@@ -53,6 +53,19 @@ RaylibTemplate --scene gameplay            # start on a scene from src/scenes/re
 RaylibTemplate --scene gameplay,pause      # start on a stack of scenes, bottom first
 RaylibTemplate --script my_playtest.txt    # run a playtest script, exit 1 if an `expect` fails
 RaylibTemplate --session session.txt       # resume from this file if it exists, save to it on exit
+RaylibTemplate --log game.log              # also write the log to this file
+```
+
+Every log line is stamped `[seconds frame level scene]`, and each scene change is logged. Game code logs with raylib's `TraceLog`.
+
+## Formatting and linting
+
+Code is formatted with clang-format in Google style, and CI fails on unformatted code. Both tools are pinned and fetched through [uv](https://docs.astral.sh/uv/), so results are the same on every machine.
+
+```sh
+cmake -P cmake/Format.cmake                              # format everything
+cmake -DCHECK=ON -P cmake/Format.cmake                   # what CI runs
+cmake --build --preset build-macos-debug --target lint   # clang-tidy bug checks
 ```
 
 ## Requirements

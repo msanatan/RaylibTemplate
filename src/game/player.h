@@ -3,9 +3,8 @@
 
 #include "raylib.h"
 
-class Player
-{
-public:
+class Player {
+ public:
   Vector3 position;
   float size;
 
@@ -14,4 +13,4 @@ public:
   void move(Vector3 velocity);
 };
 
-#endif // !GBM_PLAYER_H
+#endif  // !GBM_PLAYER_H

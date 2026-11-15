@@ -7,21 +7,20 @@
 
 #include "raylib.h"
 
-void DrawTextCentered(const std::string &text, float screenHeightFraction, int fontSize, Color color);
+void DrawTextCentered(const std::string& text, float screenHeightFraction,
+                      int fontSize, Color color);
 
-class Menu
-{
-public:
-  int add(const std::string &label, std::function<void()> onActivate);
-  void setLabel(int item, const std::string &label);
+class Menu {
+ public:
+  int add(const std::string& label, std::function<void()> onActivate);
+  void setLabel(int item, const std::string& label);
   std::string selectedLabel() const;
 
   void update();
   void draw() const;
 
-private:
-  struct Item
-  {
+ private:
+  struct Item {
     std::string label;
     std::function<void()> onActivate;
   };
@@ -32,4 +31,4 @@ private:
   int selected = 0;
 };
 
-#endif // !GBM_UI_H
+#endif  // !GBM_UI_H
