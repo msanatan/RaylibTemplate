@@ -115,6 +115,16 @@ std::string SceneManager::describe() const
   return description;
 }
 
+std::string SceneManager::stackNames() const
+{
+  std::string names;
+  for (const Entry &entry : stack)
+  {
+    names += (names.empty() ? "" : " > ") + std::string(entry.scene->name());
+  }
+  return names;
+}
+
 void SceneManager::applyPending()
 {
   std::vector<PendingChange> changes;

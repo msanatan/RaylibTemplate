@@ -5,6 +5,7 @@
 
 #include "core/assets.h"
 #include "core/launch_options.h"
+#include "core/log.h"
 #include "core/playtest.h"
 #include "core/scene_manager.h"
 #include "raylib.h"
@@ -27,8 +28,10 @@ static void UpdateAndDrawFrame(void *gamePointer)
   {
     PollAssetChanges([&game] { game.scenes.reload(); });
   }
+  LogNextFrame();
   game.playtest.beginFrame(game.scenes);
   game.scenes.update(game.playtest.isActive() ? Playtest::frameTime : GetFrameTime());
+  LogSceneStack(game.scenes.stackNames());
 
   BeginDrawing();
   game.scenes.draw();
@@ -105,6 +108,7 @@ int main(int argc, char **argv)
     TraceLog(LOG_ERROR, "GAME: %s", error.c_str());
     return 1;
   }
+  InitLog(options.log);
 
   const int screenWidth = 1024;
   const int screenHeight = 768;
@@ -127,5 +131,6 @@ int main(int argc, char **argv)
   CloseAssets();
   CloseAudioDevice();
   CloseWindow();
+  CloseLog();
   return succeeded ? 0 : 1;
 }

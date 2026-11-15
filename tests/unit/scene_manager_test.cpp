@@ -113,6 +113,7 @@ TEST_CASE("an overlay keeps the scene beneath it on screen")
 
   scenes.draw();
   CHECK(events == Events{"draw game", "draw pause"});
+  CHECK(scenes.stackNames() == "game > pause");
 }
 
 TEST_CASE("a non-overlay hides the scene beneath it")

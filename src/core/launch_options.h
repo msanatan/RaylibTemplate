@@ -10,6 +10,7 @@ struct LaunchOptions
   std::string scene = "splash";
   std::string script;
   std::string session;
+  std::string log;
 };
 
 bool ParseLaunchOptions(const std::vector<std::string> &arguments, LaunchOptions &options, std::string &error);

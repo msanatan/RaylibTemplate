@@ -15,10 +15,11 @@ TEST_CASE("options are read in any order")
 {
   LaunchOptions options;
   std::string error;
-  CHECK(ParseLaunchOptions({"--script", "run.txt", "--session", "save.txt", "--scene", "gameplay,pause"}, options, error));
+  CHECK(ParseLaunchOptions({"--script", "run.txt", "--session", "save.txt", "--log", "game.log", "--scene", "gameplay,pause"}, options, error));
   CHECK(options.scene == "gameplay,pause");
   CHECK(options.script == "run.txt");
   CHECK(options.session == "save.txt");
+  CHECK(options.log == "game.log");
 }
 
 TEST_CASE("an unknown option is rejected")

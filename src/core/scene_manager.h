@@ -54,6 +54,7 @@ public:
   void update(float deltaTime);
   void draw() const;
   std::string describe() const;
+  std::string stackNames() const;
 
 private:
   enum class Change

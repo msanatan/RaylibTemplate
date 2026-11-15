@@ -1,7 +1,6 @@
 #include "core/playtest.h"
 
 #include <cctype>
-#include <cstdio>
 #include <filesystem>
 #include <fstream>
 #include <map>
@@ -22,6 +21,16 @@ const int eventMousePosition = 7;
 void Inject(int event, int first, int second = 0)
 {
   PlayAutomationEvent({0, (unsigned int)event, {first, second, 0, 0}});
+}
+
+void LogLines(int level, const std::string &lines)
+{
+  std::istringstream stream(lines);
+  std::string line;
+  while (std::getline(stream, line))
+  {
+    TraceLog(level, "PLAYTEST:   %s", line.c_str());
+  }
 }
 
 int KeyFromName(const std::string &name)
@@ -130,8 +139,8 @@ void Playtest::beginFrame(const SceneManager &scenes)
     const Command &command = commands[next++];
     if (command.name == "dump")
     {
-      std::printf("PLAYTEST dump (line %d):\n%s", command.line, scenes.describe().c_str());
-      std::fflush(stdout);
+      TraceLog(LOG_INFO, "PLAYTEST: dump (line %d)", command.line);
+      LogLines(LOG_INFO, scenes.describe());
       continue;
     }
     if (command.name == "expect")
@@ -140,8 +149,8 @@ void Playtest::beginFrame(const SceneManager &scenes)
       {
         continue;
       }
-      std::printf("PLAYTEST FAILED (line %d): expected \"%s\" in:\n%s", command.line, command.text.c_str(), scenes.describe().c_str());
-      std::fflush(stdout);
+      TraceLog(LOG_ERROR, "PLAYTEST: FAILED (line %d), expected \"%s\" in:", command.line, command.text.c_str());
+      LogLines(LOG_ERROR, scenes.describe());
       failed = true;
       finished = true;
       return;
