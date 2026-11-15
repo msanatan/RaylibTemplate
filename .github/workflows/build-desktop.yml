@@ -4,11 +4,11 @@ jobs:
   desktop:
     strategy:
       matrix:
-        os: [macos-latest, windows-latest]
+        os: [macos-26, windows-2025]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: seanmiddleditch/gha-setup-ninja@v5
+      - uses: actions/checkout@v7
+      - uses: seanmiddleditch/gha-setup-ninja@v6
       - name: Configure
         run: cmake --preset ${{ runner.os == 'macOS' && 'macos-release' || 'windows-release' }}
       - name: Build
@@ -36,7 +36,7 @@ jobs:
             codesign --verify --deep --strict --verbose=2 "$APP_BUNDLE"
             ditto -c -k --keepParent "$APP_BUNDLE" "dist/${GAME_NAME}-macos.zip"
           fi
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: ${{ steps.project-name.outputs.name }}-${{ matrix.os }}
           path: dist

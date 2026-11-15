@@ -2,10 +2,10 @@ name: build-web
 on: [push, pull_request]
 jobs:
   web:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
-      - uses: mymindstorm/setup-emsdk@v14
+      - uses: actions/checkout@v7
+      - uses: emscripten-core/setup-emsdk@v16
         with: { version: 7.0.0 }
       - name: Configure (emcmake)
         run: emcmake cmake --preset web-release
@@ -19,7 +19,7 @@ jobs:
       - name: Copy to index.html
         run: |
           cp build/web-release/${{ steps.project-name.outputs.name }}.html build/web-release/index.html
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: ${{ steps.project-name.outputs.name }}-web
           path: |
