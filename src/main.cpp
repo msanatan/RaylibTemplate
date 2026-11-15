@@ -94,7 +94,7 @@ static bool RunGame(const LaunchOptions& options) {
   if (!options.session.empty() && !session.empty()) {
     std::ofstream(options.session) << session;
   }
-  return !game.playtest.hasFailed();
+  return game.playtest.finish();
 }
 
 int main(int argc, char** argv) {

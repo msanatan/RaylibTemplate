@@ -23,6 +23,10 @@ class Playtest {
   void beginFrame(const SceneManager& scenes);
   void endFrame();
 
+  // Call once the game loop stops. Unexpected exits fail unfinished scripts;
+  // an expect_exit marker must immediately follow the command that caused it.
+  bool finish();
+
  private:
   struct HeldInput {
     int releaseEvent;
@@ -37,6 +41,7 @@ class Playtest {
   size_t next = 0;
   int framesToWait = 0;
   std::string pendingShot;
+  int pendingShotLine = 0;
   bool finished = false;
   bool failed = false;
 };

@@ -22,5 +22,16 @@ foreach(PLAYTEST_SCRIPT IN LISTS PLAYTEST_SCRIPTS)
     COMMAND ${PROJECT_NAME} --script ${PLAYTEST_SCRIPT}
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
   )
-  set_tests_properties(playtest_${PLAYTEST_NAME} PROPERTIES LABELS playtest)
+  set_tests_properties(playtest_${PLAYTEST_NAME} PROPERTIES LABELS playtest TIMEOUT 30)
 endforeach()
+
+# Protect the main-loop exit code: skipped assertions must never pass a run.
+add_test(
+  NAME playtest_early_exit
+  COMMAND ${CMAKE_COMMAND}
+    "-DGAME=$<TARGET_FILE:${PROJECT_NAME}>"
+    "-DSCRIPT=${CMAKE_CURRENT_SOURCE_DIR}/fixtures/playtests/early_exit.txt"
+    -P ${CMAKE_CURRENT_SOURCE_DIR}/CheckEarlyExit.cmake
+  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+)
+set_tests_properties(playtest_early_exit PROPERTIES LABELS playtest TIMEOUT 30)

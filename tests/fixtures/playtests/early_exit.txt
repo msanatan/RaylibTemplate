@@ -1,0 +1,4 @@
+# Start on main_menu, click Quit, and require a later assertion to fail the run.
+wait 1
+click 512 500
+expect this assertion must not be silently skipped

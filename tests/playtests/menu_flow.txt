@@ -26,6 +26,6 @@ press DOWN
 press ENTER
 expect scene 0: main_menu
 
-# Clicks Quit. The line after it is only reached if the game is still running.
+# Clicks Quit and requires the game to exit as a result.
 click 512 500
-expect the game to have quit
+expect_exit

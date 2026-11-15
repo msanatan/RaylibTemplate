@@ -4,6 +4,7 @@
 #include <fstream>
 #include <map>
 #include <sstream>
+#include <utility>
 
 #include "raylib.h"
 
@@ -39,6 +40,7 @@ bool LoadPlaytestScript(const std::string& scriptFile,
     return false;
   }
 
+  std::vector<PlaytestCommand> parsed;
   std::string line;
   for (int lineNumber = 1; std::getline(file, line); lineNumber++) {
     std::istringstream words(line.substr(0, line.find('#')));
@@ -46,6 +48,12 @@ bool LoadPlaytestScript(const std::string& scriptFile,
     command.line = lineNumber;
     if (!(words >> command.name)) {
       continue;
+    }
+    if (!parsed.empty() &&
+        (parsed.back().name == "quit" || parsed.back().name == "expect_exit")) {
+      TraceLog(LOG_ERROR, "PLAYTEST: [%s:%d] Commands after [%s] cannot run",
+               scriptFile.c_str(), lineNumber, parsed.back().name.c_str());
+      return false;
     }
 
     std::string keyName;
@@ -64,7 +72,8 @@ bool LoadPlaytestScript(const std::string& scriptFile,
       std::getline(words >> std::ws, command.text);
       command.text.erase(command.text.find_last_not_of(" \t\r") + 1);
       valid = !command.text.empty();
-    } else if (command.name != "dump" && command.name != "quit") {
+    } else if (command.name != "dump" && command.name != "quit" &&
+               command.name != "expect_exit") {
       valid = false;
     }
 
@@ -75,7 +84,13 @@ bool LoadPlaytestScript(const std::string& scriptFile,
                scriptFile.c_str(), lineNumber, line.c_str());
       return false;
     }
-    commands.push_back(command);
+    parsed.push_back(command);
   }
+  if (parsed.empty()) {
+    TraceLog(LOG_ERROR, "PLAYTEST: [%s] Script contains no commands",
+             scriptFile.c_str());
+    return false;
+  }
+  commands = std::move(parsed);
   return true;
 }

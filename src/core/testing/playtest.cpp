@@ -66,6 +66,14 @@ void Playtest::beginFrame(const SceneManager& scenes) {
       finished = true;
       return;
     }
+    if (command.name == "expect_exit") {
+      TraceLog(LOG_ERROR,
+               "PLAYTEST: FAILED (line %d), expected the game to exit",
+               command.line);
+      failed = true;
+      finished = true;
+      return;
+    }
 
     framesToWait = command.frames - 1;
     if (command.name == "press" || command.name == "hold") {
@@ -80,6 +88,7 @@ void Playtest::beginFrame(const SceneManager& scenes) {
       held.push_back({eventMouseButtonUp, MOUSE_BUTTON_LEFT, command.frames});
     } else if (command.name == "shot") {
       pendingShot = command.text;
+      pendingShotLine = command.line;
     } else if (command.name == "quit") {
       finished = true;
     }
@@ -98,18 +107,56 @@ void Playtest::endFrame() {
     return;
   }
 
-  // Drawing is batched until EndDrawing, so without this the capture would miss
-  // the current frame
-  rlDrawRenderBatchActive();
-  Image screen = LoadImageFromScreen();
   const std::filesystem::path folder =
       std::filesystem::path(pendingShot).parent_path();
+  std::error_code error;
   if (!folder.empty()) {
-    std::filesystem::create_directories(folder);
+    std::filesystem::create_directories(folder, error);
   }
-  ExportImage(screen, pendingShot.c_str());
-  UnloadImage(screen);
+
+  bool saved = false;
+  if (!error) {
+    // Drawing is batched until EndDrawing, so without this the capture would
+    // miss the current frame.
+    rlDrawRenderBatchActive();
+    Image screen = LoadImageFromScreen();
+    saved = IsImageValid(screen) && ExportImage(screen, pendingShot.c_str());
+    UnloadImage(screen);
+  }
+  if (!saved) {
+    TraceLog(
+        LOG_ERROR,
+        "PLAYTEST: FAILED (line %d), could not save screenshot [%s]: %s",
+        pendingShotLine, pendingShot.c_str(),
+        error ? error.message().c_str() : "image capture or export failed");
+    failed = true;
+    finished = true;
+  }
   pendingShot.clear();
+}
+
+bool Playtest::finish() {
+  if (!isActive()) {
+    return true;
+  }
+  if (!finished) {
+    if (next < commands.size() && commands[next].name == "expect_exit") {
+      next++;
+    } else {
+      TraceLog(LOG_ERROR,
+               "PLAYTEST: FAILED, game exited before script finished");
+      if (next < commands.size()) {
+        TraceLog(LOG_ERROR, "PLAYTEST: Next command was [%s] at line %d",
+                 commands[next].name.c_str(), commands[next].line);
+      }
+      failed = true;
+    }
+    finished = true;
+  }
+  if (!failed) {
+    TraceLog(LOG_INFO, "PLAYTEST: Passed");
+  }
+  return !failed;
 }
 
 void Playtest::releaseExpiredInputs() {

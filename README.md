@@ -68,12 +68,21 @@ ctest --preset test-macos-debug -L playtest   # scripted runs of the real game
 
 `core/testing/script.h/.cpp` defines and parses commands. `playtest.h/.cpp` executes them, injects input, and captures screenshots.
 
+Empty scripts, failed assertions, screenshot failures, and unexpected game exits return exit code 1. Scripts finish successfully at the end or with `quit`. To test a game action that should close the application, put `expect_exit` immediately after it:
+
+```text
+click 512 500
+expect_exit
+```
+
+`quit` and `expect_exit` must be the last command. `expect_exit` fails if the game keeps running; exiting before reaching the preceding command also fails. CTest limits each playtest to 30 seconds.
+
 The game also takes these options directly:
 
 ```sh
 RaylibTemplate --scene gameplay            # start on a scene from src/scenes/registry.cpp
 RaylibTemplate --scene gameplay,pause      # start on a stack of scenes, bottom first
-RaylibTemplate --script my_playtest.txt    # run a playtest script, exit 1 if an `expect` fails
+RaylibTemplate --script my_playtest.txt    # run a playtest script, exit 1 on failure
 RaylibTemplate --session session.txt       # resume from this file if it exists, save to it on exit
 RaylibTemplate --log game.log              # also write the log to this file
 RaylibTemplate --touch                     # show on-screen controls and treat the mouse as a finger
