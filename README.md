@@ -33,6 +33,8 @@ Load assets through `core/assets.h` in a scene's constructor and unload them in 
 
 In Debug desktop builds, saving any file under `assets/` while the game is running rebuilds the live scenes so they load the new version.
 
+A scene that implements `saveState()` and `restoreState()` keeps its place through that rebuild, and through a restart when the game is run with `--session`.
+
 ## Testing
 
 ```sh
@@ -48,7 +50,9 @@ The game also takes these options directly:
 
 ```sh
 RaylibTemplate --scene gameplay            # start on a scene from src/scenes/registry.cpp
+RaylibTemplate --scene gameplay,pause      # start on a stack of scenes, bottom first
 RaylibTemplate --script my_playtest.txt    # run a playtest script, exit 1 if an `expect` fails
+RaylibTemplate --session session.txt       # resume from this file if it exists, save to it on exit
 ```
 
 ## Requirements

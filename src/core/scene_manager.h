@@ -2,6 +2,7 @@
 #define GBM_SCENE_MANAGER_H
 
 #include <functional>
+#include <map>
 #include <memory>
 #include <string>
 #include <vector>
@@ -16,25 +17,37 @@ public:
   template <typename T, typename... Args>
   void push(Args... args)
   {
-    pending.push_back({Change::Push, factory<T>(args...)});
+    pending.push_back({Change::Push, factory<T>(args...), ""});
   }
 
   template <typename T, typename... Args>
   void replace(Args... args)
   {
-    pending.push_back({Change::Pop, factory<T>(args...)});
+    pending.push_back({Change::Pop, factory<T>(args...), ""});
   }
 
   template <typename T, typename... Args>
   void reset(Args... args)
   {
-    pending.push_back({Change::Clear, factory<T>(args...)});
+    pending.push_back({Change::Clear, factory<T>(args...), ""});
   }
 
   void pop();
   void quit();
 
-  // Rebuilds every live scene so it loads its assets again. Call between frames, never from inside a scene.
+  template <typename T>
+  void registerScene(const std::string &name)
+  {
+    registered[name] = factory<T>();
+  }
+
+  bool pushNamed(const std::string &name, const std::string &state = "");
+
+  // One line per scene, bottom first: its name, then whatever its saveState() returned
+  std::string saveSession() const;
+  bool restoreSession(const std::string &session);
+
+  // Call between frames, never from inside a scene
   void reload();
 
   bool isDone() const;
@@ -47,7 +60,8 @@ private:
   {
     Push,
     Pop,
-    Clear
+    Clear,
+    Quit
   };
 
   using Factory = std::function<std::unique_ptr<Scene>()>;
@@ -55,6 +69,13 @@ private:
   struct PendingChange
   {
     Change change;
+    Factory create;
+    std::string state;
+  };
+
+  struct Entry
+  {
+    std::unique_ptr<Scene> scene;
     Factory create;
   };
 
@@ -64,16 +85,12 @@ private:
     return [this, args...]() { return std::make_unique<T>(*this, args...); };
   }
 
-  struct Entry
-  {
-    std::unique_ptr<Scene> scene;
-    Factory create;
-  };
-
   void applyPending();
 
+  std::map<std::string, Factory> registered;
   std::vector<Entry> stack;
   std::vector<PendingChange> pending;
+  bool quitting = false;
 };
 
 #endif // !GBM_SCENE_MANAGER_H

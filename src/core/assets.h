@@ -9,7 +9,7 @@
 void InitAssets();
 void CloseAssets();
 
-// Calls onChange once files under assets/ have changed and settled. Only Debug desktop builds watch.
+// Only Debug desktop builds watch for changes; everywhere else this does nothing
 void PollAssetChanges(const std::function<void()> &onChange);
 
 std::string AssetPath(const std::string &relativePath);

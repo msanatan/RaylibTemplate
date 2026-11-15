@@ -11,13 +11,14 @@ TEST_CASE("no arguments starts on the splash scene without a script")
   CHECK(options.script.empty());
 }
 
-TEST_CASE("scene and script are read in any order")
+TEST_CASE("options are read in any order")
 {
   LaunchOptions options;
   std::string error;
-  CHECK(ParseLaunchOptions({"--script", "run.txt", "--scene", "gameplay"}, options, error));
-  CHECK(options.scene == "gameplay");
+  CHECK(ParseLaunchOptions({"--script", "run.txt", "--session", "save.txt", "--scene", "gameplay,pause"}, options, error));
+  CHECK(options.scene == "gameplay,pause");
   CHECK(options.script == "run.txt");
+  CHECK(options.session == "save.txt");
 }
 
 TEST_CASE("an unknown option is rejected")

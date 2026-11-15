@@ -7,6 +7,7 @@ bool ParseLaunchOptions(const std::vector<std::string> &arguments, LaunchOptions
   const std::map<std::string, std::string *> values = {
       {"--scene", &options.scene},
       {"--script", &options.script},
+      {"--session", &options.session},
   };
 
   for (size_t i = 0; i < arguments.size(); i += 2)

@@ -17,11 +17,14 @@ public:
   virtual void update(float deltaTime) = 0;
   virtual void draw() const = 0;
 
-  // Overlays such as a pause menu keep the scene beneath them on screen
   virtual bool isOverlay() const { return false; }
 
-  // Whatever a playtest script needs to check, printed by its `dump` and matched by its `expect`
+  // Read by the playtest `dump` and `expect` commands
   virtual std::string debugState() const { return ""; }
+
+  // Must fit on one line. Handed back after an asset reload or a `--session` restart.
+  virtual std::string saveState() const { return ""; }
+  virtual void restoreState(const std::string &) {}
 
 protected:
   SceneManager &scenes;

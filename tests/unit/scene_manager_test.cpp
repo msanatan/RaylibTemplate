@@ -44,6 +44,32 @@ private:
   Events *events;
 };
 
+class StatefulScene : public Scene
+{
+public:
+  explicit StatefulScene(SceneManager &scenes) : Scene(scenes) {}
+
+  const char *name() const override { return "stateful"; }
+  void update(float) override { progress += "!"; }
+  void draw() const override {}
+  std::string debugState() const override { return progress; }
+  std::string saveState() const override { return progress; }
+  void restoreState(const std::string &state) override { progress = state; }
+
+private:
+  std::string progress = "start";
+};
+
+class PlainScene : public Scene
+{
+public:
+  explicit PlainScene(SceneManager &scenes) : Scene(scenes) {}
+
+  const char *name() const override { return "plain"; }
+  void update(float) override {}
+  void draw() const override {}
+};
+
 // Each update applies the changes queued before it, so this settles a freshly queued change
 Events Settle(SceneManager &scenes, Events &events)
 {
@@ -161,7 +187,19 @@ TEST_CASE("reload rebuilds every scene in place, bottom first")
   CHECK(scenes.describe() == "scene 0: game \nscene 1: pause \n");
 }
 
-TEST_CASE("quit empties the stack and ends the game")
+TEST_CASE("reload hands each scene back the state it saved")
+{
+  SceneManager scenes;
+  scenes.push<StatefulScene>();
+  scenes.update(0.0f);
+  scenes.update(0.0f);
+  CHECK(scenes.describe() == "scene 0: stateful start!\n");
+
+  scenes.reload();
+  CHECK(scenes.describe() == "scene 0: stateful start!\n");
+}
+
+TEST_CASE("quit ends the game after the current update and keeps the stack for saving")
 {
   Events events;
   SceneManager scenes;
@@ -171,5 +209,43 @@ TEST_CASE("quit empties the stack and ends the game")
   scenes.quit();
   CHECK_FALSE(scenes.isDone());
   Settle(scenes, events);
+  CHECK(scenes.isDone());
+  CHECK(scenes.saveSession() == "menu \n");
+}
+
+TEST_CASE("only registered names can be pushed")
+{
+  SceneManager scenes;
+  scenes.registerScene<PlainScene>("plain");
+
+  CHECK(scenes.pushNamed("plain"));
+  CHECK_FALSE(scenes.pushNamed("missing"));
+  scenes.update(0.0f);
+  CHECK(scenes.describe() == "scene 0: plain \n");
+}
+
+TEST_CASE("a saved session restores the same stack with each scene's state")
+{
+  SceneManager played;
+  played.push<StatefulScene>();
+  played.push<PlainScene>();
+  played.update(0.0f);
+  const std::string session = played.saveSession();
+  CHECK(session == "stateful start\nplain \n");
+
+  SceneManager resumed;
+  resumed.registerScene<StatefulScene>("stateful");
+  resumed.registerScene<PlainScene>("plain");
+  CHECK(resumed.restoreSession(session));
+  resumed.update(0.0f);
+  CHECK(resumed.saveSession() == session);
+}
+
+TEST_CASE("a session naming an unregistered scene is refused and pushes nothing")
+{
+  SceneManager scenes;
+  scenes.registerScene<PlainScene>("plain");
+
+  CHECK_FALSE(scenes.restoreSession("plain \nmissing \n"));
   CHECK(scenes.isDone());
 }

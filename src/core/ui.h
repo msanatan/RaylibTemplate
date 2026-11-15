@@ -9,7 +9,6 @@
 
 void DrawTextCentered(const std::string &text, float screenHeightFraction, int fontSize, Color color);
 
-// Vertical list driven by arrows/WASD + Enter/Space, or by mouse and touch
 class Menu
 {
 public:

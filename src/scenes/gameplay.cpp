@@ -1,5 +1,7 @@
 #include "scenes/gameplay.h"
 
+#include <cstdio>
+
 #include "core/scene_manager.h"
 #include "raymath.h"
 #include "scenes/pause.h"
@@ -21,6 +23,16 @@ GameplayScene::GameplayScene(SceneManager &scenes) : Scene(scenes)
 std::string GameplayScene::debugState() const
 {
   return TextFormat("player=(%.2f, %.2f, %.2f)", player.position.x, player.position.y, player.position.z);
+}
+
+std::string GameplayScene::saveState() const
+{
+  return TextFormat("%f %f %f", player.position.x, player.position.y, player.position.z);
+}
+
+void GameplayScene::restoreState(const std::string &state)
+{
+  std::sscanf(state.c_str(), "%f %f %f", &player.position.x, &player.position.y, &player.position.z);
 }
 
 void GameplayScene::update(float deltaTime)

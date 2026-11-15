@@ -14,6 +14,8 @@ public:
 
   const char *name() const override { return "gameplay"; }
   std::string debugState() const override;
+  std::string saveState() const override;
+  void restoreState(const std::string &state) override;
   void update(float deltaTime) override;
   void draw() const override;
 

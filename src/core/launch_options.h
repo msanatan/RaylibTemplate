@@ -6,11 +6,12 @@
 
 struct LaunchOptions
 {
+  // Comma-separated when starting on a stack, bottom first: "gameplay,pause"
   std::string scene = "splash";
   std::string script;
+  std::string session;
 };
 
-// Returns false and describes the problem in `error` for an unknown option or one missing its value
 bool ParseLaunchOptions(const std::vector<std::string> &arguments, LaunchOptions &options, std::string &error);
 
 #endif // !GBM_LAUNCH_OPTIONS_H

@@ -1,3 +1,5 @@
+#include <fstream>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -34,30 +36,63 @@ static void UpdateAndDrawFrame(void *gamePointer)
   EndDrawing();
 }
 
+static bool PushStartingScenes(SceneManager &scenes, const LaunchOptions &options)
+{
+  std::ifstream sessionFile(options.session);
+  if (!options.session.empty() && sessionFile)
+  {
+    std::stringstream session;
+    session << sessionFile.rdbuf();
+    if (scenes.restoreSession(session.str()))
+    {
+      return true;
+    }
+    TraceLog(LOG_WARNING, "GAME: Ignoring session [%s], it is empty or names an unregistered scene", options.session.c_str());
+  }
+
+  std::istringstream names(options.scene);
+  std::string name;
+  while (std::getline(names, name, ','))
+  {
+    if (!scenes.pushNamed(name))
+    {
+      TraceLog(LOG_ERROR, "GAME: Unknown scene [%s]", name.c_str());
+      return false;
+    }
+  }
+  return true;
+}
+
 // Scenes hold GPU resources, so the game has to be destroyed before the window closes
 static bool RunGame(const LaunchOptions &options)
 {
   Game game;
+  RegisterScenes(game.scenes);
   if (!options.script.empty() && !game.playtest.load(options.script))
   {
     return false;
   }
-  if (!PushSceneByName(game.scenes, options.scene))
+  if (!PushStartingScenes(game.scenes, options))
   {
-    TraceLog(LOG_ERROR, "GAME: Unknown scene [%s]", options.scene.c_str());
     return false;
   }
 
 #if defined(PLATFORM_WEB)
   emscripten_set_main_loop_arg(UpdateAndDrawFrame, &game, 0, 1);
 #else
-  // Scripted runs are left uncapped so they finish as fast as the machine allows
-  SetTargetFPS(game.playtest.isActive() ? 0 : 60);
+  const int uncapped = 0;
+  SetTargetFPS(game.playtest.isActive() ? uncapped : 60);
   while (!WindowShouldClose() && !game.scenes.isDone() && !game.playtest.isFinished())
   {
     UpdateAndDrawFrame(&game);
   }
 #endif
+
+  const std::string session = game.scenes.saveSession();
+  if (!options.session.empty() && !session.empty())
+  {
+    std::ofstream(options.session) << session;
+  }
   return !game.playtest.hasFailed();
 }
 
@@ -79,7 +114,6 @@ int main(int argc, char **argv)
 #endif
   if (!options.script.empty())
   {
-    // Keeps a scripted run from stealing keyboard focus from whoever started it
     SetConfigFlags(FLAG_WINDOW_UNFOCUSED);
   }
   InitWindow(screenWidth, screenHeight, GAME_TITLE);

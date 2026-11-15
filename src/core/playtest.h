@@ -6,8 +6,7 @@
 
 #include "core/scene_manager.h"
 
-// Drives the game from a script file so a run can be repeated and checked without a person at the keyboard.
-// One command per line, `#` starts a comment:
+// Script format: one command per line, `#` starts a comment:
 //   press KEY          tap a key for one frame
 //   hold KEY FRAMES    keep a key down for that many frames
 //   click X Y          left click at a window position

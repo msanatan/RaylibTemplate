@@ -5,7 +5,6 @@
 
 #include "raylib.h"
 
-// Serves every raylib file load under mountPoint from the zip at pakFile
 void MountPak(const std::string &pakFile, const std::string &mountPoint);
 void UnmountPak();
 
