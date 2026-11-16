@@ -2,11 +2,16 @@
 
 Keep code easy for humans and agents to read and modify. See [README.md](README.md) for the project layout, build and verification commands, scene operations, and playtest scripting.
 
+## Approach
+
+- Edit game logic, environments, reusable engine systems, and the editor as needed to complete the task. Follow the engine's existing conventions and keep changes in the layer that owns the behavior.
+- Change Raylib itself only when necessary and with explicit user permission.
+
 ## Game design and assets
 
-- Use Tiled for 2D level authoring; it is already installed. Keep Raylib as the game runtime. Use a custom editor for 3D scene authoring, with Blender reserved for modeling.
+- Use Tiled for 2D level authoring; it is already installed. Keep Raylib as the game runtime. Use Scenic for 3D level authoring, with Blender reserved for modeling.
 - Ask the user open-ended questions about how the game should look, sound, and feel. Help them think through their design without steering them too far toward a particular solution. Keep questions focused and give them room to decide.
-- Do not generate AI assets, including artwork, models, music, or sound effects. Placeholder images and simple geometric stand-ins are fine; do not use AI asset generation for placeholders either. The user will find or create game assets, or direct you to sources.
+- Do not generate AI assets, including artwork, models, music, or sound effects. Placeholder images and simple geometric stand-ins are fine; do not use AI asset generation for placeholders either. The user will find or create game assets, or direct you to sources. User must give explicit permission to generate an AI asset.
 
 ## Where code goes
 
@@ -16,40 +21,13 @@ Keep code easy for humans and agents to read and modify. See [README.md](README.
 
 - `levels/` is the 3D level library, owned by neither the game nor the editor so the format cannot drift between them: `document/` (data model, JSON, validation), `runtime/` (loading and drawing with raylib), `editing/` (operations and commands, tools only). The game links `runtime/` and never `editing/`. What a level's custom properties mean to a game belongs in `game/src/game/`.
 
-## Scenic editor code
-
-- `editor/src/` is grouped by responsibility: `document/` (session, document, history, selection), `commands/` (live commands, log), `transport/` (local socket, CLI), `viewport/` (camera, picking, gizmo, rendering the view), `ui/` (panels, menus, dialogs, shortcuts), `app/` (frame loop, file watching, launching the game), `testing/` (scripted runs). Tests are in `editor/tests/`.
-- Every change to the open level goes through `EditorSession`. Panels, shortcuts, and live commands call its methods and read `session.doc()`; they never mutate the document. Express edits as level operations so the UI and agents share validation and undo.
-- A continuous edit (drag, colour pick) is a gesture with a named owner; only that owner can finish it, and it becomes one undo step.
-- Use `doc().index()` for lookups, children, and world transforms. It is rebuilt after every change, so do not keep it, or pointers into the level, across an edit.
-- State belongs to the object that uses it: panel state in the panel class, not in file-level variables.
-- Keep the document, commands, and transport free of any window or UI dependency so they stay testable without one.
-
 ## Authoring 3D levels
 
-Levels are JSON files under `game/assets/levels/`. Prefer `scenic-cli` (built with the editor preset, in the build directory's `bin/`) over hand-editing: it validates every change and never leaves a half-applied edit. Hand-edited files are fine too; run `validate` and `format` afterwards.
-
-- Conventions: metres, +Y up, XZ ground, objects and cameras face local -Z. Rotation is Euler degrees `[x, y, z]`, applied as roll (Z), pitch (X), then yaw (Y). Transforms are relative to the parent. Primitives are centred on their origin, so a height-2 box rests on the ground at Y = 1. See `levels/document/level.h` and `level.schema.json`.
-- Object kinds: `group`, `marker`, `box`, `sphere`, `cylinder`, `plane`, `camera`. Game meaning goes in an object's custom `properties`; reference another object with `{"$ref": "<object id>"}`. Geometry does not imply collision.
-- Always name a target: `--file <level>` edits a file, `--editor <session-id>` edits a running Scenic's in-memory document, including unsaved changes. `scenic-cli sessions` lists running editors. A missing editor is an error; never fall back to the file yourself without deciding to.
-- Discover before guessing: `commands` lists commands, `commands describe apply` returns every operation and its defaults.
-- Inspect, then edit with the revision you saw: `inspect` returns `document.revision` (and `document.id` for an editor). Mutations need `--expect <revision>`, plus `--document <id>` with `--editor`. Exit code 3 means the document moved on: inspect again and reapply.
-- Edit with one `apply` batch. Operations run in order and the result is validated once; any failure changes nothing. Refer to objects by exact ID. IDs are UUIDs and anything else is rejected: leave `id` out of `create` and `ids` out of `duplicate` so they are generated, then read them from `generated_ids` in the result. Supply your own UUID only when a later operation in the same batch must reference the new object. Check `ok`, `changed`, and `errors` in the JSON result. Exit codes: 0 success, 2 invalid request or document, 3 revision conflict, 4 I/O or connection failure, 5 noncanonical file.
-- A live `apply` is undoable and unsaved. `save` writes the file; the running game reloads saved files only. `screenshot`, `frame`, `camera preview`, `logs`, and `state` let you look at a running editor.
-
-```sh
-scenic-cli --file game/assets/levels/main.json inspect
-scenic-cli --file game/assets/levels/main.json apply --ops edits.json --expect <revision>
-scenic-cli --file game/assets/levels/main.json validate
-scenic-cli --file game/assets/levels/main.json format --check
-```
-
-```json
-{"operations": [
-  {"op": "create", "name": "Door", "kind": "box", "transform": {"position": [2, 1, 0]}, "shape": {"size": [1, 2, 0.2]}},
-  {"op": "set-property", "id": "9d12790b-dbd4-48b4-9b77-785f500cee1a", "path": "/fov_boost", "value": true}
-]}
-```
+- Read level JSON directly under `game/assets/levels/` to understand the environment; write changes through `scenic-cli` for validation and atomic edits. See the [README](README.md#3d-levels) for CLI usage, `scenic-cli commands` to discover commands, and `scenic-cli commands describe <name>` for details.
+- Follow the level conventions in [level.h](levels/document/level.h) and [level.schema.json](levels/document/level.schema.json). Put gameplay meaning in custom properties; geometry alone does not imply collision.
+- Choose an explicit target: `--file <level>` for a saved file or `--editor <session-id>` for a running editor, including unsaved changes. Use `sessions` to find editors and `inspect` to read their current document; do not silently switch targets.
+- Inspect before writing, then batch related edits with `apply --expect <revision>` (also `--document <id>` for an editor). On a revision conflict, inspect again before retrying. Check the result for errors.
+- Save live editor changes when they should reach the game; the game reloads saved files only. Inspect screenshots when checking appearance.
 
 ## Documentation
 
