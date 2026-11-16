@@ -1,0 +1,13 @@
+# A texture changed on disk is reloaded without touching the document
+
+wait 10
+cmd select --ids @Crate
+expect "texture_reloads":0
+shot shots/editor_texture_before.png
+
+copy assets/textures/alternate.png assets/textures/crate.png
+sleep 1500
+expect "texture_reloads":1
+expect "dirty":false
+expect "selection":["@Crate"]
+shot shots/editor_texture_after.png

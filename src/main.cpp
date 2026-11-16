@@ -1,4 +1,5 @@
 #include <fstream>
+#include <set>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -47,7 +48,9 @@ static bool PushStartingScenes(SceneManager& scenes,
   if (!options.session.empty() && sessionFile) {
     std::stringstream session;
     session << sessionFile.rdbuf();
-    if (scenes.restoreSession(session.str())) {
+    const std::set<std::string> freshScenes =
+        options.freshLevel ? LevelSceneNames() : std::set<std::string>();
+    if (scenes.restoreSession(session.str(), freshScenes)) {
       return true;
     }
     TraceLog(LOG_WARNING,

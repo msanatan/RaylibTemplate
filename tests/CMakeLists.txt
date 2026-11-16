@@ -25,6 +25,16 @@ foreach(PLAYTEST_SCRIPT IN LISTS PLAYTEST_SCRIPTS)
   set_tests_properties(playtest_${PLAYTEST_NAME} PROPERTIES LABELS playtest TIMEOUT 30)
 endforeach()
 
+# Reset Level is bound to a key in Debug builds only
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+  add_test(
+    NAME playtest_level_reset
+    COMMAND ${PROJECT_NAME} --script ${CMAKE_CURRENT_SOURCE_DIR}/playtests/debug/level_reset.txt
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+  )
+  set_tests_properties(playtest_level_reset PROPERTIES LABELS playtest TIMEOUT 30)
+endif()
+
 # Protect the main-loop exit code: skipped assertions must never pass a run.
 add_test(
   NAME playtest_early_exit
@@ -35,3 +45,12 @@ add_test(
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
 )
 set_tests_properties(playtest_early_exit PROPERTIES LABELS playtest TIMEOUT 30)
+
+add_executable(level_tests ${LEVEL_TEST_SOURCES})
+target_link_libraries(level_tests PRIVATE levels_runtime doctest::doctest)
+add_test(NAME levels COMMAND level_tests)
+set_tests_properties(levels PROPERTIES LABELS unit)
+
+if(BUILD_EDITOR)
+  add_subdirectory(${CMAKE_SOURCE_DIR}/editor/tests ${CMAKE_BINARY_DIR}/editor-tests)
+endif()

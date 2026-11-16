@@ -1,0 +1,18 @@
+# Dragging a transform handle is one undo step
+
+wait 10
+cmd select --ids @Crate
+wait 3
+expect "primary_position":[0.0,0.0,0.0]
+expect "undo_steps":0
+
+drag_object @Crate 150 0 12
+expect_not "primary_position":[0.0,0.0,0.0]
+expect "undo_steps":1
+expect "dirty":true
+shot shots/editor_gizmo.png editor
+
+key SUPER+Z
+expect "primary_position":[0.0,0.0,0.0]
+expect "undo_steps":0
+expect "dirty":false

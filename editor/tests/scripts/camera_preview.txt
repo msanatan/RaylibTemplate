@@ -1,0 +1,16 @@
+# Framing and the level camera preview move only the editor's view
+
+wait 10
+cmd frame --ids @Crate
+expect "camera":"navigation"
+cmd screenshot --path shots/framed.png
+
+cmd camera preview enter
+expect "camera":"level_camera"
+cmd screenshot --path shots/preview.png --area editor
+
+# Navigation leaves the preview; none of this edits the level
+cmd frame
+expect "camera":"navigation"
+expect "dirty":false
+expect "undo_steps":0

@@ -27,6 +27,11 @@ int KeyFromName(const std::string& name) {
   if (name.size() == 1 && std::isalnum((unsigned char)name[0])) {
     return std::toupper((unsigned char)name[0]);
   }
+  if (name.size() >= 2 && name.size() <= 3 && name[0] == 'F' &&
+      name.find_first_not_of("0123456789", 1) == std::string::npos) {
+    const int number = std::stoi(name.substr(1));
+    return number >= 1 && number <= 12 ? KEY_F1 + number - 1 : KEY_NULL;
+  }
   const auto key = namedKeys.find(name);
   return key == namedKeys.end() ? KEY_NULL : key->second;
 }

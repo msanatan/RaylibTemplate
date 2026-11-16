@@ -20,7 +20,7 @@
 // Reaching the end also stops the test successfully. quit and expect_exit must
 // be the last command. An empty script or an unexpected game exit is an error.
 // KEY is a letter, a digit, or one of SPACE ENTER ESCAPE TAB BACKSPACE UP DOWN
-// LEFT RIGHT SHIFT CONTROL.
+// LEFT RIGHT SHIFT CONTROL F1 to F12.
 struct PlaytestCommand {
   std::string name;
   std::string text;

@@ -1,0 +1,83 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Scenic level, version 1",
+  "description": "Structure of an authored 3D level. Units are metres, +Y is up, the ground is the XZ plane, and objects face along local -Z. Relationships between objects (unique IDs, parents, sibling order, references) are checked by `scenic-cli validate`, not by this schema.",
+  "type": "object",
+  "required": ["version", "objects"],
+  "additionalProperties": false,
+  "properties": {
+    "version": {"const": 1},
+    "camera": {
+      "description": "ID of the camera object that supplies the game's initial view, or null to use the game's own camera.",
+      "type": ["string", "null"]
+    },
+    "objects": {
+      "description": "A flat collection. Hierarchy comes from `parent`; file order is not meaningful.",
+      "type": "array",
+      "items": {"$ref": "#/definitions/object"}
+    }
+  },
+  "definitions": {
+    "vec2": {"type": "array", "items": {"type": "number"}, "minItems": 2, "maxItems": 2},
+    "vec3": {"type": "array", "items": {"type": "number"}, "minItems": 3, "maxItems": 3},
+    "object": {
+      "type": "object",
+      "required": ["id", "name", "kind", "order"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {"description": "Stable, unique UUID. Scenic and scenic-cli generate it.", "type": "string", "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"},
+        "name": {"type": "string"},
+        "kind": {"enum": ["group", "marker", "box", "sphere", "cylinder", "plane", "camera"]},
+        "parent": {"description": "ID of the parent object, or null for a root object.", "type": ["string", "null"]},
+        "order": {"description": "Zero-based position among siblings; contiguous per parent.", "type": "integer", "minimum": 0},
+        "transform": {
+          "description": "Relative to the parent. world = parent * translate * rotate * scale.",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "position": {"$ref": "#/definitions/vec3", "description": "Metres. Default [0, 0, 0]."},
+            "rotation": {"$ref": "#/definitions/vec3", "description": "Euler degrees [x, y, z], applied as roll (Z), then pitch (X), then yaw (Y). Default [0, 0, 0]."},
+            "scale": {"$ref": "#/definitions/vec3", "description": "Positive multipliers. Default [1, 1, 1]."}
+          }
+        },
+        "shape": {
+          "description": "Unscaled dimensions in metres, centred on the local origin. Box: size [x, y, z]. Plane: size [x, z] on local XZ. Sphere: radius. Cylinder: radius and height along local Y. Primitives only.",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "size": {"type": "array", "items": {"type": "number", "exclusiveMinimum": 0}, "minItems": 2, "maxItems": 3},
+            "radius": {"type": "number", "exclusiveMinimum": 0},
+            "height": {"type": "number", "exclusiveMinimum": 0}
+          }
+        },
+        "appearance": {
+          "description": "Unlit look of a primitive. The texture is multiplied by the color.",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "color": {"type": "string", "pattern": "^#[0-9A-Fa-f]{6}$", "description": "Default #FFFFFF."},
+            "texture": {"type": ["string", "null"], "description": "Path relative to the assets directory, such as textures/crate.png."},
+            "tiling": {"$ref": "#/definitions/vec2", "description": "Default [1, 1]."},
+            "offset": {"$ref": "#/definitions/vec2", "description": "Default [0, 0]."}
+          }
+        },
+        "camera": {
+          "description": "Lens of a camera object. It looks along local -Z with local +Y up.",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "projection": {"enum": ["perspective", "orthographic"]},
+            "fov": {"type": "number", "exclusiveMinimum": 0, "exclusiveMaximum": 180, "description": "Vertical field of view in degrees. Default 45."},
+            "size": {"type": "number", "exclusiveMinimum": 0, "description": "Orthographic vertical size in metres. Default 10."},
+            "near": {"type": "number", "exclusiveMinimum": 0, "description": "Metres. Default 0.1."},
+            "far": {"type": "number", "exclusiveMinimum": 0, "description": "Metres. Default 1000."}
+          }
+        },
+        "properties": {
+          "description": "Game-specific data, preserved as written. An object of the form {\"$ref\": \"<object id>\"} is a reference to another object.",
+          "type": "object"
+        }
+      }
+    }
+  }
+}

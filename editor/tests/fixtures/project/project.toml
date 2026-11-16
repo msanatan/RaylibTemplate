@@ -1,0 +1,4 @@
+# A small project for the editor's windowed checks; each run works on a copy
+
+[editor]
+level = "assets/levels/main.json"

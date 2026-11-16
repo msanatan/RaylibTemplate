@@ -4,6 +4,7 @@
 #include <functional>
 #include <map>
 #include <memory>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -42,7 +43,9 @@ class SceneManager {
   // One line per scene, bottom first: its name, then whatever its saveState()
   // returned
   std::string saveSession() const;
-  bool restoreSession(const std::string& session);
+  // Scenes named in `freshScenes` are restored without their saved state
+  bool restoreSession(const std::string& session,
+                      const std::set<std::string>& freshScenes = {});
 
   // Call between frames, never from inside a scene
   void reload();

@@ -1,0 +1,12 @@
+# Reset Level (F5, desktop Debug builds only) returns the authored starting state after movement
+
+wait 30
+press SPACE
+press ENTER
+expect scene 0: gameplay player=(0.00, 1.50, 0.00)
+hold RIGHT 60
+expect player=(5.00, 1.50, 0.00)
+
+press F5
+expect scene 0: gameplay player=(0.00, 1.50, 0.00)
+shot shots/level_reset.png

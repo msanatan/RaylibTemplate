@@ -1,0 +1,15 @@
+# Dragging a value in Properties is one undo step, even with the gizmo shown
+
+wait 10
+cmd select --ids @Crate
+wait 3
+expect "undo_steps":0
+
+drag_target field:position 120 0 12
+expect_not "primary_position":[0.0,0.0,0.0]
+expect "undo_steps":1
+
+key SUPER+Z
+expect "primary_position":[0.0,0.0,0.0]
+expect "undo_steps":0
+expect "redo_steps":1

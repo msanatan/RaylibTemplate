@@ -37,7 +37,8 @@ std::string SceneManager::saveSession() const {
   return session;
 }
 
-bool SceneManager::restoreSession(const std::string& session) {
+bool SceneManager::restoreSession(const std::string& session,
+                                  const std::set<std::string>& freshScenes) {
   std::vector<std::pair<std::string, std::string>> scenes;
   std::istringstream lines(session);
   std::string line;
@@ -47,8 +48,9 @@ bool SceneManager::restoreSession(const std::string& session) {
     if (registered.count(name) == 0) {
       return false;
     }
-    scenes.push_back(
-        {name, space == std::string::npos ? "" : line.substr(space + 1)});
+    const bool keepState =
+        space != std::string::npos && freshScenes.count(name) == 0;
+    scenes.push_back({name, keepState ? line.substr(space + 1) : ""});
   }
 
   for (const auto& [name, state] : scenes) {

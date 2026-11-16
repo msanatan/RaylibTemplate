@@ -11,20 +11,20 @@
             "preLaunchTask": "CMake: build"
         },
         {
-            "name": "Debug Tuni",
+            "name": "Debug Scenic",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/editor-debug/bin/Tuni",
+            "program": "${workspaceFolder}/build/editor-debug/bin/Scenic",
             "cwd": "${workspaceFolder}",
             "MIMode": "gdb",
             "osx": {
-                "program": "${workspaceFolder}/build/macos-editor/bin/Tuni",
+                "program": "${workspaceFolder}/build/macos-editor/bin/Scenic",
                 "MIMode": "lldb"
             },
             "windows": {
-                "program": "${workspaceFolder}/build/windows-editor/bin/Tuni.exe"
+                "program": "${workspaceFolder}/build/windows-editor/bin/Scenic.exe"
             },
-            "preLaunchTask": "Tuni: build"
+            "preLaunchTask": "Scenic: build"
         }
     ]
 }

@@ -1,0 +1,17 @@
+# Keys typed into a field never reach editor shortcuts
+
+wait 10
+cmd select --ids @Crate
+wait 3
+click_target field:name
+type 2
+key DELETE
+key BACKSPACE
+key 4
+expect "object_count":3
+expect "selection":["@Crate"]
+
+# Leaving the field hands the keyboard back to the editor
+key ESCAPE
+key DELETE
+expect "object_count":2

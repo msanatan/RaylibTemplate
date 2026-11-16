@@ -1,0 +1,3 @@
+# Tests guard optionals with REQUIRE, which the optional-access check cannot see
+InheritParentConfig: true
+Checks: '-bugprone-unchecked-optional-access'

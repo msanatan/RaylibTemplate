@@ -1,0 +1,107 @@
+{
+  "version": 1,
+  "camera": "1668fb9f-281e-40a8-b5b6-50be73287cd6",
+  "objects": [
+    {
+      "id": "1668fb9f-281e-40a8-b5b6-50be73287cd6",
+      "name": "Camera",
+      "kind": "camera",
+      "parent": null,
+      "order": 2,
+      "transform": {
+        "position": [
+          0.0,
+          6.0,
+          12.0
+        ],
+        "rotation": [
+          -25.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "camera": {
+        "projection": "perspective",
+        "fov": 45.0,
+        "size": 10.0,
+        "near": 0.1,
+        "far": 1000.0
+      },
+      "properties": {}
+    },
+    {
+      "id": "82f754a7-158d-48be-8a76-9c036b316e83",
+      "name": "Spawn",
+      "kind": "marker",
+      "parent": null,
+      "order": 1,
+      "transform": {
+        "position": [
+          5.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "properties": {}
+    },
+    {
+      "id": "97edadae-c739-4ea9-98e0-86d0301ef187",
+      "name": "Crate",
+      "kind": "box",
+      "parent": null,
+      "order": 0,
+      "transform": {
+        "position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "shape": {
+        "size": [
+          2.0,
+          2.0,
+          2.0
+        ]
+      },
+      "appearance": {
+        "color": "#FFFFFF",
+        "texture": "textures/crate.png",
+        "tiling": [
+          1.0,
+          1.0
+        ],
+        "offset": [
+          0.0,
+          0.0
+        ]
+      },
+      "properties": {}
+    }
+  ]
+}

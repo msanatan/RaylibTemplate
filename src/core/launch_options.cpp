@@ -13,6 +13,7 @@ bool ParseLaunchOptions(const std::vector<std::string>& arguments,
 
   const std::map<std::string, bool*> flags = {
       {"--touch", &options.touch},
+      {"--fresh-level", &options.freshLevel},
   };
 
   for (size_t i = 0; i < arguments.size(); i += 2) {

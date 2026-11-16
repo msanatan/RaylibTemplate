@@ -11,6 +11,9 @@ struct LaunchOptions {
   std::string session;
   std::string log;
   bool touch = false;
+  // Start level scenes from their authored state, ignoring gameplay progress
+  // saved in the session
+  bool freshLevel = false;
 };
 
 bool ParseLaunchOptions(const std::vector<std::string>& arguments,

@@ -18,7 +18,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-option(BUILD_EDITOR "Build the desktop 3D editor" OFF)
+option(BUILD_EDITOR "Build the Scenic 3D editor and scenic-cli" OFF)
 if(BUILD_EDITOR AND EMSCRIPTEN)
   message(FATAL_ERROR "The editor requires a desktop build")
 endif()
@@ -58,6 +58,10 @@ if(NOT EMSCRIPTEN AND NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
   FetchContent_MakeAvailable(miniz)
 endif()
 
+if (CMAKE_CXX_COMPILER_ID MATCHES "Clang|AppleClang|GNU")
+  set(WARNING_FLAGS -Wall -Wextra -Wno-missing-field-initializers)
+endif()
+
 # -------- Your game --------
 # Everything except main.cpp is a library, so the unit tests link the same code the game runs
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS src/*.cpp)
@@ -69,20 +73,17 @@ add_library(game STATIC ${SOURCES})
 target_include_directories(game PUBLIC src)
 target_link_libraries(game PUBLIC raylib)
 
+# -------- Authored 3D levels --------
+add_subdirectory(levels)
+target_link_libraries(game PUBLIC levels_runtime)
+
 add_executable(${PROJECT_NAME} src/main.cpp)
 target_link_libraries(${PROJECT_NAME} PRIVATE game)
-
-if(BUILD_EDITOR)
-  add_subdirectory(editor)
-endif()
 
 # -------- Assets --------
 include(cmake/Assets.cmake)
 
-# Warnings
-if (CMAKE_CXX_COMPILER_ID MATCHES "Clang|AppleClang|GNU")
-  target_compile_options(game PUBLIC -Wall -Wextra -Wno-missing-field-initializers)
-endif()
+target_compile_options(game PUBLIC ${WARNING_FLAGS})
 
 target_compile_definitions(game PUBLIC GAME_TITLE=\"${PROJECT_NAME}\")
 
@@ -112,11 +113,11 @@ if(NOT EMSCRIPTEN)
   endif()
   file(GLOB_RECURSE LINT_TEST_SOURCES CONFIGURE_DEPENDS tests/*.cpp)
   if(BUILD_EDITOR)
-    file(GLOB_RECURSE LINT_EDITOR_SOURCES CONFIGURE_DEPENDS editor/src/*.cpp)
+    file(GLOB_RECURSE LINT_EDITOR_SOURCES CONFIGURE_DEPENDS editor/src/*.cpp editor/tests/*.cpp)
   endif()
   add_custom_target(lint
     COMMAND uvx --from clang-tidy==${CLANG_TIDY_VERSION} clang-tidy -p ${CMAKE_BINARY_DIR} --quiet ${LINT_EXTRA_ARGS}
-            ${SOURCES} ${CMAKE_SOURCE_DIR}/src/main.cpp ${LINT_TEST_SOURCES} ${LINT_EDITOR_SOURCES}
+            ${SOURCES} ${LEVEL_SOURCES} ${CMAKE_SOURCE_DIR}/src/main.cpp ${LINT_TEST_SOURCES} ${LINT_EDITOR_SOURCES}
     USES_TERMINAL
   )
 endif()
@@ -124,5 +125,13 @@ endif()
 # -------- Tests --------
 if(NOT EMSCRIPTEN)
   enable_testing()
+endif()
+
+# -------- Scenic editor --------
+if(BUILD_EDITOR)
+  add_subdirectory(editor)
+endif()
+
+if(NOT EMSCRIPTEN)
   add_subdirectory(tests)
 endif()

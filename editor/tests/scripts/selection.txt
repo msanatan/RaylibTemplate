@@ -1,0 +1,11 @@
+# Selecting in the viewport and in the Explorer drives one shared selection
+
+wait 10
+expect "selection":[]
+click_object @Crate
+expect "selection":["@Crate"]
+click_target row:@Spawn
+expect "selection":["@Spawn"]
+click_object @Crate
+expect "selection":["@Crate"]
+shot shots/editor_selection.png editor

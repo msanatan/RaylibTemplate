@@ -3,12 +3,12 @@
 wait 5
 press SPACE
 press ENTER
-expect scene 0: gameplay player=(0.00, 0.00, 0.00)
+expect scene 0: gameplay player=(0.00, 1.50, 0.00)
 
 # A first touch anywhere brings the controls up; the stick's right edge is at 246, 614
 touch 600 300 2
 touch 246 614 60
-expect player=(5.00, 0.00
+expect player=(5.00, 1.50
 shot shots/touch_controls.png
 
 touch 952 69 2

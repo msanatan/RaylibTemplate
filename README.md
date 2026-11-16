@@ -1,6 +1,6 @@
 # Raylib Template
 
-A C++20 raylib template for 2D and 3D games, with a scene stack, action-based input, asset loading, and scripted playtests. GitHub Actions builds Windows, macOS, and HTML5 versions.
+A C++20 raylib template for 3D games, with a scene stack, action-based input, asset loading, and scripted playtests. GitHub Actions builds Windows, macOS, and HTML5 versions.
 
 ## Build
 
@@ -13,12 +13,13 @@ cmake --build build
 
 The executable is under `build/` (inside `RaylibTemplate.app/Contents/MacOS/` on macOS). Other platform and configuration presets are in [CMakePresets.json](CMakePresets.json).
 
-Tuni (this is not Unity), is used for placing 3D objects at edit time.
+3D levels are authored in Scenic, the level editor, or with its command-line companion `scenic-cli`. Both are built by the editor presets; [project.toml](project.toml) holds their settings.
 
 ```sh
 cmake --preset macos-editor
 cmake --build --preset build-macos-editor
-./build/macos-editor/bin/Tuni
+./build/macos-editor/bin/Scenic                  # opens this project's level
+./build/macos-editor/bin/scenic-cli commands     # list the level commands
 ```
 
 Default, release, and web presets leave the editor disabled.
@@ -28,11 +29,20 @@ Default, release, and web presets leave the editor disabled.
 ```text
 src/main.cpp   startup and main loop
 src/core/      reusable systems: assets, input, scenes, testing, UI, logging
-editor/src/    Tuni desktop editor
+levels/        3D level library shared by the game and the editor
+editor/        Scenic level editor, scenic-cli, and their tests
 src/scenes/    screens and scene registration
 src/game/      game rules, entities, and input bindings
-assets/        game assets
+assets/        game assets; 3D levels are JSON files in assets/levels/
 ```
+
+## 3D levels
+
+Levels are versioned JSON, described by [level.schema.json](levels/document/level.schema.json) and the conventions in [level.h](levels/document/level.h). Gameplay loads [assets/levels/main.json](assets/levels/main.json) through [World](src/game/world.h): the object whose properties contain `"role": "player"` is the player, and the level's designated camera supplies the starting view.
+
+Edit levels in Scenic, with `scenic-cli`, or as text. Scenic's Play and Reset buttons save and launch the game using the arguments in `project.toml`. A running Debug game reloads a saved level and keeps gameplay progress; F5 (Debug builds only) or `--fresh-level` returns to the authored starting state.
+
+`scenic-cli` runs the same validated operations as the editor, against a level file (`--file`) or a running editor's unsaved document (`--editor`). Put target options (`--file`, `--editor`, `--assets`) before the command, positional arguments next, and command options last. Boolean options accept an optional `true` or `false` value. [AGENTS.md](AGENTS.md) has the workflow; `scenic-cli commands describe <name>` documents each command.
 
 Each screen implements [Scene](src/core/scenes/scene.h). Register new screens in `src/scenes/registry.cpp`. The [SceneManager](src/core/scenes/scene_manager.h) supports `push`/`pop` for stacked screens, `replace` for the top screen, `reset` for the entire stack, and `quit`.
 
@@ -51,6 +61,7 @@ RaylibTemplate --script my_playtest.txt    # run a script; exit 1 on failure
 RaylibTemplate --session session.txt       # restore/save scene state across runs
 RaylibTemplate --log game.log              # copy structured logs to a file
 RaylibTemplate --touch                     # test on-screen controls with the mouse
+RaylibTemplate --fresh-level               # ignore saved gameplay progress in level scenes
 ```
 
 Use raylib's `TraceLog` for game logging and scenes' `debugState()` for playtest assertions.
@@ -60,9 +71,11 @@ Use raylib's `TraceLog` for game logging and scenes' `debugState()` for playtest
 ```sh
 ctest --test-dir build --output-on-failure -L unit       # no window needed
 ctest --test-dir build --output-on-failure -L playtest   # opens game windows
+ctest --test-dir build --output-on-failure -L integration   # levels, scenic-cli, editor document; editor builds
+ctest --test-dir build --output-on-failure -L editor     # opens Scenic windows; editor builds
 cmake -P cmake/Format.cmake                             # format code
 cmake -DCHECK=ON -P cmake/Format.cmake                   # check formatting
 cmake --build build --target lint                      # clang-tidy checks
 ```
 
-Unit tests live in `tests/unit/`. Playtest examples are in [tests/playtests/](tests/playtests/); screenshots go to the build directory's `shots/` folder. See [script.h](src/core/testing/script.h) for commands and script rules.
+Unit tests live in `tests/unit/`. Playtest examples are in [tests/playtests/](tests/playtests/); screenshots go to the build directory's `shots/` folder. See [script.h](src/core/testing/script.h) for commands and script rules. Level tests live in `levels/tests/`. Scenic's tests live in `editor/tests/`; its scripted runs are described in [script.h](editor/src/testing/script.h).

@@ -45,3 +45,6 @@
 
 build/
 bin/
+
+# Local Scenic editor preferences
+.scenic/

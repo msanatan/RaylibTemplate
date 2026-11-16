@@ -13,3 +13,5 @@ void RegisterScenes(SceneManager& scenes) {
   scenes.registerScene<GameplayScene>("gameplay");
   scenes.registerScene<PauseScene>("pause");
 }
+
+std::set<std::string> LevelSceneNames() { return {"gameplay"}; }

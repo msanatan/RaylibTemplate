@@ -5,8 +5,9 @@ Checks: >
   performance-*,
   -bugprone-easily-swappable-parameters,
   -bugprone-exception-escape,
+  -bugprone-signed-bitwise,
   -bugprone-throwing-static-initialization,
   -clang-analyzer-cplusplus.NewDeleteLeaks,
   -performance-enum-size
 WarningsAsErrors: '*'
-HeaderFilterRegex: '^(?!.*/build/).*/(src|tests)/.*'
+HeaderFilterRegex: '^(?!.*/build/).*/(src|tests|levels|editor)/.*'

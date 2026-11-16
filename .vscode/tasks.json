@@ -2,7 +2,7 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Tuni: configure",
+            "label": "Scenic: configure",
             "type": "process",
             "command": "cmake",
             "args": ["-S", ".", "-B", "build/editor-debug", "-G", "Ninja", "-DCMAKE_BUILD_TYPE=Debug", "-DBUILD_EDITOR=ON"],
@@ -18,20 +18,20 @@
             "problemMatcher": []
         },
         {
-            "label": "Tuni: build",
+            "label": "Scenic: build",
             "type": "process",
             "command": "cmake",
-            "args": ["--build", "build/editor-debug", "--target", "Tuni"],
+            "args": ["--build", "build/editor-debug", "--target", "Scenic"],
             "osx": {
-                "args": ["--build", "--preset", "build-macos-editor", "--target", "Tuni"]
+                "args": ["--build", "--preset", "build-macos-editor", "--target", "Scenic"]
             },
             "windows": {
-                "args": ["--build", "--preset", "build-windows-editor", "--target", "Tuni"]
+                "args": ["--build", "--preset", "build-windows-editor", "--target", "Scenic"]
             },
             "options": {
                 "cwd": "${workspaceFolder}"
             },
-            "dependsOn": "Tuni: configure",
+            "dependsOn": "Scenic: configure",
             "problemMatcher": ["$gcc"]
         }
     ]

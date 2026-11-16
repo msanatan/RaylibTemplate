@@ -18,6 +18,14 @@ void BindGameInput() {
   BindGamepadButtons("pause", {GAMEPAD_BUTTON_MIDDLE_RIGHT});
   BindTouchButton("pause", {{0.93f, 0.09f}, 0.05f, "II"});
 
+  // Reloads the level's authored starting state while iterating on it. Only
+  // desktop Debug builds bind a key, so players never trigger it.
+#if defined(DEV_ASSETS_DIR)
+  BindKeys("reset_level", {KEY_F5});
+#else
+  BindKeys("reset_level", {});
+#endif
+
   BindAxisKeys("move", KEY_LEFT, KEY_RIGHT, KEY_UP, KEY_DOWN);
   BindAxisKeys("move", KEY_A, KEY_D, KEY_W, KEY_S);
   BindAxisGamepadStick("move", GAMEPAD_AXIS_LEFT_X, GAMEPAD_AXIS_LEFT_Y);

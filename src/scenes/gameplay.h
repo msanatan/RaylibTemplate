@@ -4,8 +4,8 @@
 #include <string>
 
 #include "core/scenes/scene.h"
-#include "game/player.h"
-#include "raylib.h"
+#include "game/world.h"
+#include "levels/runtime/rendering.h"
 
 class GameplayScene : public Scene {
  public:
@@ -19,8 +19,9 @@ class GameplayScene : public Scene {
   void draw() const override;
 
  private:
-  Camera3D camera = {};
-  Player player = Player(0.0f, 0.0f, 0.0f, 2.0f);
+  World world;
+  // Drawing loads textures on first use
+  mutable LevelRenderer renderer;
 };
 
 #endif  // !GBM_GAMEPLAY_H
