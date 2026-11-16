@@ -6,8 +6,8 @@ set(CLANG_FORMAT_VERSION 23.1.5)
 
 get_filename_component(PROJECT_ROOT ${CMAKE_CURRENT_LIST_DIR}/.. ABSOLUTE)
 file(GLOB_RECURSE FORMAT_FILES
-  ${PROJECT_ROOT}/src/*.cpp ${PROJECT_ROOT}/src/*.h
-  ${PROJECT_ROOT}/tests/*.cpp ${PROJECT_ROOT}/tests/*.h
+  ${PROJECT_ROOT}/game/src/*.cpp ${PROJECT_ROOT}/game/src/*.h
+  ${PROJECT_ROOT}/game/tests/*.cpp ${PROJECT_ROOT}/game/tests/*.h
   ${PROJECT_ROOT}/levels/*.cpp ${PROJECT_ROOT}/levels/*.h
   ${PROJECT_ROOT}/editor/src/*.cpp ${PROJECT_ROOT}/editor/src/*.h
   ${PROJECT_ROOT}/editor/tests/*.cpp ${PROJECT_ROOT}/editor/tests/*.h

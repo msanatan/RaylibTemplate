@@ -10,11 +10,11 @@ Keep code easy for humans and agents to read and modify. See [README.md](README.
 
 ## Where code goes
 
-- `src/core/` contains reusable template systems. Keep game-specific logic out.
-- Screens belong in `src/scenes/`, game rules and entities in `src/game/`, and asset files in `assets/`.
+- `game/src/core/` contains reusable template systems. Keep game-specific logic out.
+- Screens belong in `game/src/scenes/`, game rules and entities in `game/src/game/`, and asset files in `game/assets/`.
 - Prefer focused files and simple control flow. Add abstractions when a concrete need warrants them.
 
-- `levels/` is the 3D level library, owned by neither the game nor the editor so the format cannot drift between them: `document/` (data model, JSON, validation), `runtime/` (loading and drawing with raylib), `editing/` (operations and commands, tools only). The game links `runtime/` and never `editing/`. What a level's custom properties mean to a game belongs in `src/game/`.
+- `levels/` is the 3D level library, owned by neither the game nor the editor so the format cannot drift between them: `document/` (data model, JSON, validation), `runtime/` (loading and drawing with raylib), `editing/` (operations and commands, tools only). The game links `runtime/` and never `editing/`. What a level's custom properties mean to a game belongs in `game/src/game/`.
 
 ## Scenic editor code
 
@@ -27,7 +27,7 @@ Keep code easy for humans and agents to read and modify. See [README.md](README.
 
 ## Authoring 3D levels
 
-Levels are JSON files under `assets/levels/`. Prefer `scenic-cli` (built with the editor preset, in the build directory's `bin/`) over hand-editing: it validates every change and never leaves a half-applied edit. Hand-edited files are fine too; run `validate` and `format` afterwards.
+Levels are JSON files under `game/assets/levels/`. Prefer `scenic-cli` (built with the editor preset, in the build directory's `bin/`) over hand-editing: it validates every change and never leaves a half-applied edit. Hand-edited files are fine too; run `validate` and `format` afterwards.
 
 - Conventions: metres, +Y up, XZ ground, objects and cameras face local -Z. Rotation is Euler degrees `[x, y, z]`, applied as roll (Z), pitch (X), then yaw (Y). Transforms are relative to the parent. Primitives are centred on their origin, so a height-2 box rests on the ground at Y = 1. See `levels/document/level.h` and `level.schema.json`.
 - Object kinds: `group`, `marker`, `box`, `sphere`, `cylinder`, `plane`, `camera`. Game meaning goes in an object's custom `properties`; reference another object with `{"$ref": "<object id>"}`. Geometry does not imply collision.
@@ -38,10 +38,10 @@ Levels are JSON files under `assets/levels/`. Prefer `scenic-cli` (built with th
 - A live `apply` is undoable and unsaved. `save` writes the file; the running game reloads saved files only. `screenshot`, `frame`, `camera preview`, `logs`, and `state` let you look at a running editor.
 
 ```sh
-scenic-cli --file assets/levels/main.json inspect
-scenic-cli --file assets/levels/main.json apply --ops edits.json --expect <revision>
-scenic-cli --file assets/levels/main.json validate
-scenic-cli --file assets/levels/main.json format --check
+scenic-cli --file game/assets/levels/main.json inspect
+scenic-cli --file game/assets/levels/main.json apply --ops edits.json --expect <revision>
+scenic-cli --file game/assets/levels/main.json validate
+scenic-cli --file game/assets/levels/main.json format --check
 ```
 
 ```json
@@ -61,7 +61,7 @@ scenic-cli --file assets/levels/main.json format --check
 
 - Load assets through `core/assets/assets.h` in scene constructors and unload them in destructors. Pair `LoadGameMusic` with `UnloadGameMusic` so packed music buffers are released correctly.
 - Use `.glb` for models and OGG for looping music.
-- Query named input actions; add bindings in `src/game/bindings.cpp`. Query an action every update while its on-screen control should be active.
+- Query named input actions; add bindings in `game/src/game/bindings.cpp`. Query an action every update while its on-screen control should be active.
 - Use the `deltaTime` passed to `update` for gameplay timing. Avoid wall-clock APIs such as `GetFrameTime()` and `GetTime()` in game logic so scripted runs remain repeatable.
 - Change screens through `SceneManager`. The README describes stack operations; changes are applied after the current scene's update.
 - Log through raylib's `TraceLog` with a `SUBSYSTEM:` prefix.
@@ -69,7 +69,7 @@ scenic-cli --file assets/levels/main.json format --check
 ## Adding a scene
 
 - Implement `name()`, `update()`, and `draw()`.
-- Register the scene in `src/scenes/registry.cpp`.
+- Register the scene in `game/src/scenes/registry.cpp`.
 - Expose useful state through `debugState()` for playtest assertions.
 - Implement `saveState()` and `restoreState()` when progress should survive an asset reload or session restart. Saved scene state must fit on one line.
 

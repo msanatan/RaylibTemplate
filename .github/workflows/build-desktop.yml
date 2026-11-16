@@ -28,10 +28,10 @@ jobs:
         run: |
           mkdir -p dist
           if [[ "$RUNNER_OS" == "Windows" ]]; then
-            cp "build/windows-release/${GAME_NAME}.exe" dist/
-            cp build/windows-release/assets.pak dist/
+            cp "build/windows-release/game/${GAME_NAME}.exe" dist/
+            cp build/windows-release/game/assets.pak dist/
           else
-            APP_BUNDLE="build/macos-release/${GAME_NAME}.app"
+            APP_BUNDLE="build/macos-release/game/${GAME_NAME}.app"
             codesign --force --sign - "$APP_BUNDLE"
             codesign --verify --deep --strict --verbose=2 "$APP_BUNDLE"
             ditto -c -k --keepParent "$APP_BUNDLE" "dist/${GAME_NAME}-macos.zip"

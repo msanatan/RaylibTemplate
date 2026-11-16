@@ -1,12 +1,3 @@
-FetchContent_Declare(doctest
-  GIT_REPOSITORY https://github.com/doctest/doctest.git
-  GIT_TAG        v2.5.3
-  GIT_SHALLOW    TRUE
-)
-set(DOCTEST_WITH_TESTS OFF CACHE BOOL "" FORCE)
-set(DOCTEST_NO_INSTALL ON CACHE BOOL "" FORCE)
-FetchContent_MakeAvailable(doctest)
-
 file(GLOB_RECURSE UNIT_TEST_SOURCES CONFIGURE_DEPENDS unit/*.cpp)
 add_executable(unit_tests ${UNIT_TEST_SOURCES})
 target_link_libraries(unit_tests PRIVATE game doctest::doctest)
@@ -45,12 +36,3 @@ add_test(
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
 )
 set_tests_properties(playtest_early_exit PROPERTIES LABELS playtest TIMEOUT 30)
-
-add_executable(level_tests ${LEVEL_TEST_SOURCES})
-target_link_libraries(level_tests PRIVATE levels_runtime doctest::doctest)
-add_test(NAME levels COMMAND level_tests)
-set_tests_properties(levels PROPERTIES LABELS unit)
-
-if(BUILD_EDITOR)
-  add_subdirectory(${CMAKE_SOURCE_DIR}/editor/tests ${CMAKE_BINARY_DIR}/editor-tests)
-endif()

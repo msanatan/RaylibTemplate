@@ -93,7 +93,9 @@ target_link_libraries(Scenic PRIVATE scenic_core levels_runtime editor_ui)
 target_compile_options(Scenic PRIVATE ${WARNING_FLAGS})
 # Play and Reset launch the game built alongside the editor unless project.toml names another
 target_compile_definitions(Scenic PRIVATE
-  "SCENIC_DEFAULT_PROJECT=\"${CMAKE_SOURCE_DIR}\""
+  "SCENIC_DEFAULT_PROJECT=\"${CMAKE_SOURCE_DIR}/game\""
   "SCENIC_DEFAULT_GAME=\"$<TARGET_FILE:${PROJECT_NAME}>\""
 )
 add_dependencies(Scenic ${PROJECT_NAME})
+
+add_subdirectory(tests)

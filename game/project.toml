@@ -8,7 +8,7 @@ level = "assets/levels/main.json"
 # Arguments for the game when Scenic's Play and Reset buttons launch it.
 # The executable defaults to the game built alongside the editor; set
 # `executable` to override it.
-# Run from the project root. Play resumes the last run's gameplay progress
+# Run from this game directory. Play resumes the last run's gameplay progress
 # from the session file; Reset starts from the authored level.
 play_args = ["--scene", "gameplay", "--session", ".scenic/session.txt"]
 reset_args = ["--scene", "gameplay", "--session", ".scenic/session.txt", "--fresh-level"]

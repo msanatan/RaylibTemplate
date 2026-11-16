@@ -18,10 +18,10 @@ jobs:
           echo "name=$PROJECT_NAME" >> $GITHUB_OUTPUT
       - name: Copy to index.html
         run: |
-          cp build/web-release/${{ steps.project-name.outputs.name }}.html build/web-release/index.html
+          cp build/web-release/game/${{ steps.project-name.outputs.name }}.html build/web-release/game/index.html
       - uses: actions/upload-artifact@v7
         with:
           name: ${{ steps.project-name.outputs.name }}-web
           path: |
-            build/web-release/index.html
-            build/web-release/${{ steps.project-name.outputs.name }}.*
+            build/web-release/game/index.html
+            build/web-release/game/${{ steps.project-name.outputs.name }}.*

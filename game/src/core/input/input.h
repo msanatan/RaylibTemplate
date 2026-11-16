@@ -7,9 +7,9 @@
 #include "core/input/touch_controls.h"
 #include "raylib.h"
 
-// Game code asks about named actions; src/game/bindings.cpp decides which keys,
-// gamepad buttons, gestures and on-screen controls trigger them. Asking about
-// an action nobody bound is a fatal error in Debug.
+// Game code asks about named actions; game/src/game/bindings.cpp decides which
+// keys, gamepad buttons, gestures and on-screen controls trigger them. Asking
+// about an action nobody bound is a fatal error in Debug.
 
 void BindKeys(const std::string& action, std::initializer_list<int> keys);
 void BindGamepadButtons(const std::string& action,

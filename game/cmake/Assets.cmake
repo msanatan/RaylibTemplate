@@ -1,5 +1,5 @@
 # Asset paths, desktop packing, and web preloading for the game target.
-set(ASSETS_SOURCE_DIR ${CMAKE_SOURCE_DIR}/assets)
+set(ASSETS_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/assets)
 set(ASSET_IGNORED_FILES .DS_Store Thumbs.db desktop.ini)
 
 file(GLOB_RECURSE ASSET_FILES CONFIGURE_DEPENDS RELATIVE ${ASSETS_SOURCE_DIR} ${ASSETS_SOURCE_DIR}/*)
@@ -18,7 +18,7 @@ file(CONFIGURE OUTPUT ${ASSETS_LIST_FILE} CONTENT "${ASSETS_LIST_CONTENT}\n" @ON
 
 if(EMSCRIPTEN)
   set(WEB_SHELL_FILE ${CMAKE_BINARY_DIR}/shell.html)
-  configure_file(${CMAKE_SOURCE_DIR}/web/shell.html.in ${WEB_SHELL_FILE} @ONLY)
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/web/shell.html.in ${WEB_SHELL_FILE} @ONLY)
   target_link_options(${PROJECT_NAME} PRIVATE
     --shell-file ${WEB_SHELL_FILE}
     --preload-file ${ASSETS_SOURCE_DIR}@/assets

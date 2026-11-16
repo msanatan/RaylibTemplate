@@ -1,0 +1,5 @@
+file(GLOB LEVEL_TEST_SOURCES CONFIGURE_DEPENDS *.cpp)
+add_executable(level_tests ${LEVEL_TEST_SOURCES})
+target_link_libraries(level_tests PRIVATE levels_runtime doctest::doctest)
+add_test(NAME levels COMMAND level_tests)
+set_tests_properties(levels PROPERTIES LABELS unit)

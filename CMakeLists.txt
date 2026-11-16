@@ -62,41 +62,21 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "Clang|AppleClang|GNU")
   set(WARNING_FLAGS -Wall -Wextra -Wno-missing-field-initializers)
 endif()
 
-# -------- Your game --------
-# Everything except main.cpp is a library, so the unit tests link the same code the game runs
-file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS src/*.cpp)
-list(FILTER SOURCES EXCLUDE REGEX "/src/main\\.cpp$")
-if(NOT PACK_ASSETS)
-  list(FILTER SOURCES EXCLUDE REGEX "/pak\\.cpp$")
-endif()
-add_library(game STATIC ${SOURCES})
-target_include_directories(game PUBLIC src)
-target_link_libraries(game PUBLIC raylib)
-
-# -------- Authored 3D levels --------
-add_subdirectory(levels)
-target_link_libraries(game PUBLIC levels_runtime)
-
-add_executable(${PROJECT_NAME} src/main.cpp)
-target_link_libraries(${PROJECT_NAME} PRIVATE game)
-
-# -------- Assets --------
-include(cmake/Assets.cmake)
-
-target_compile_options(game PUBLIC ${WARNING_FLAGS})
-
-target_compile_definitions(game PUBLIC GAME_TITLE=\"${PROJECT_NAME}\")
-
-# On macOS: create app bundle for distribution
-if(APPLE)
-  set_target_properties(${PROJECT_NAME} PROPERTIES
-    MACOSX_BUNDLE TRUE
-    MACOSX_BUNDLE_GUI_IDENTIFIER "com.${PROJECT_NAME}.app"
-    MACOSX_BUNDLE_BUNDLE_NAME ${PROJECT_NAME}
-    MACOSX_BUNDLE_BUNDLE_VERSION "${PROJECT_VERSION}"
-    MACOSX_BUNDLE_SHORT_VERSION_STRING "${PROJECT_VERSION}"
+# -------- Tests --------
+if(NOT EMSCRIPTEN)
+  enable_testing()
+  FetchContent_Declare(doctest
+    GIT_REPOSITORY https://github.com/doctest/doctest.git
+    GIT_TAG        v2.5.3
+    GIT_SHALLOW    TRUE
   )
+  set(DOCTEST_WITH_TESTS OFF CACHE BOOL "" FORCE)
+  set(DOCTEST_NO_INSTALL ON CACHE BOOL "" FORCE)
+  FetchContent_MakeAvailable(doctest)
 endif()
+
+add_subdirectory(levels)
+add_subdirectory(game)
 
 # -------- Formatting --------
 add_custom_target(format COMMAND ${CMAKE_COMMAND} -P ${CMAKE_SOURCE_DIR}/cmake/Format.cmake)
@@ -111,27 +91,21 @@ if(NOT EMSCRIPTEN)
     execute_process(COMMAND xcrun --show-sdk-path OUTPUT_VARIABLE MACOS_SDK OUTPUT_STRIP_TRAILING_WHITESPACE)
     set(LINT_EXTRA_ARGS --extra-arg=-isysroot${MACOS_SDK})
   endif()
-  file(GLOB_RECURSE LINT_TEST_SOURCES CONFIGURE_DEPENDS tests/*.cpp)
+  file(GLOB_RECURSE LINT_GAME_SOURCES CONFIGURE_DEPENDS game/src/*.cpp game/tests/*.cpp)
+  if(NOT PACK_ASSETS)
+    list(FILTER LINT_GAME_SOURCES EXCLUDE REGEX "/pak\\.cpp$")
+  endif()
   if(BUILD_EDITOR)
     file(GLOB_RECURSE LINT_EDITOR_SOURCES CONFIGURE_DEPENDS editor/src/*.cpp editor/tests/*.cpp)
   endif()
   add_custom_target(lint
     COMMAND uvx --from clang-tidy==${CLANG_TIDY_VERSION} clang-tidy -p ${CMAKE_BINARY_DIR} --quiet ${LINT_EXTRA_ARGS}
-            ${SOURCES} ${LEVEL_SOURCES} ${CMAKE_SOURCE_DIR}/src/main.cpp ${LINT_TEST_SOURCES} ${LINT_EDITOR_SOURCES}
+            ${LINT_GAME_SOURCES} ${LEVEL_SOURCES} ${LINT_EDITOR_SOURCES}
     USES_TERMINAL
   )
-endif()
-
-# -------- Tests --------
-if(NOT EMSCRIPTEN)
-  enable_testing()
 endif()
 
 # -------- Scenic editor --------
 if(BUILD_EDITOR)
   add_subdirectory(editor)
-endif()
-
-if(NOT EMSCRIPTEN)
-  add_subdirectory(tests)
 endif()
