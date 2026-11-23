@@ -38,6 +38,8 @@ FetchContent_Declare(raylib
 set(BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(BUILD_GAMES OFF CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(raylib)
+include(cmake/RaylibCheatsheet.cmake)
+write_raylib_cheatsheet(${raylib_SOURCE_DIR} ${RAYLIB_TAG} ${CMAKE_SOURCE_DIR}/docs/raylib-cheatsheet.md)
 
 # Web preloads assets and desktop Debug reads the source folder, so only desktop releases need a pack
 if(NOT EMSCRIPTEN AND NOT CMAKE_BUILD_TYPE STREQUAL "Debug")

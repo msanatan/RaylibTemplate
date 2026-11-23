@@ -7,6 +7,10 @@ Keep code easy for humans and agents to read and modify. See [README.md](README.
 - Ask the user open-ended questions about how the game should look, sound, and feel. Help them think through their design without steering them too far toward a particular solution. Keep questions focused and give them room to decide.
 - Do not generate AI assets, including artwork, models, music, or sound effects. Placeholder images and simple geometric stand-ins are fine; do not use AI asset generation for placeholders either. The user will find or create game assets, or direct you to sources.
 
+## raylib API
+
+Configuring CMake writes `docs/raylib-cheatsheet.md`, the raylib and raymath API for the version pinned by `RAYLIB_TAG` in `CMakeLists.txt`. Check it for function signatures, structs, and enums instead of guessing or searching online.
+
 ## Where code goes
 
 - `src/core/` contains reusable template systems. Keep game-specific logic out.
